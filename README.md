@@ -1,4 +1,4 @@
-# 👋 hey there, i'm j
+# 👋 hey there, i'm col
 
 <div align="center">
   
