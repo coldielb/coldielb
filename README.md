@@ -1,11 +1,11 @@
 # 👋 hey there, i'm j
 
 <div align="center">
-  
+
   ![Typing SVG](https://readme-typing-svg.herokuapp.com?font=Fira+Code&pause=1000&color=F70000&random=false&width=435&lines=smol+dev+from+LA;ice+cream+enthusiast;bookworm;tv+%26+movie+buff;fluffball+appreciator)
 
   <img src="https://media.giphy.com/media/VgCDAzcKvsR6OM0uWg/giphy.gif" width="50">
-  
+
   *just a dev trying to make cool stuff happen*
 </div>
 
@@ -41,30 +41,30 @@
 ## 📊 github stats
 
 <div align="center">
-  <img height="180em" src="https://github-readme-stats.vercel.app/api?username=frgmt0&show_icons=true&theme=radical&include_all_commits=true&count_private=true"/>
-  <img height="180em" src="https://github-readme-stats.vercel.app/api/top-langs/?username=frgmt0&layout=compact&langs_count=7&theme=radical"/>
+  <img height="180em" src="https://github-readme-stats.vercel.app/api?username=coldielb&show_icons=true&theme=radical&include_all_commits=true&count_private=true"/>
+  <img height="180em" src="https://github-readme-stats.vercel.app/api/top-langs/?username=coldielb&layout=compact&langs_count=7&theme=radical"/>
 </div>
 
 ## 🏆 github trophies
 
 <div align="center">
-  
-  ![Trophy](https://github-profile-trophy.vercel.app/?username=frgmt0&theme=onedark&no-frame=false&no-bg=true&margin-w=4)
-  
+
+  ![Trophy](https://github-profile-trophy.vercel.app/?username=coldielb&theme=onedark&no-frame=false&no-bg=true&margin-w=4)
+
 </div>
 
 ## 🔍 currently exploring
 
 - 🌱 learning more about **advanced rust patterns**
-- 🔭 working on **[pearl](https://github.com/frgmt0/pearl.git) & [pocket](https://github.com/frgmt0/pocket-cli.git)**
+- 🔭 working on **[reve](https://github.com/coldielb/reve.git) & [kozeig](https://github.com/kozeig/kozeig.git)**
 - 👯 looking to collaborate on **open source tools for devs**
 - 💬 ask me about **python, ice cream flavors, or cute animals**
 
 ---
 
 <div align="center">
-  <img src="https://komarev.com/ghpvc/?username=frgmt0&label=Profile%20views&color=0e75b6&style=flat" alt="frgmt0" />
+  <img src="https://komarev.com/ghpvc/?username=coldielb&label=Profile%20views&color=0e75b6&style=flat" alt="coldielb" />
   <br>
-  
+
   *thanks for stopping by! have a cookie 🍪*
 </div>

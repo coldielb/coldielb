@@ -1,0 +1,9 @@
+name = "jason-resume"
+compatibility_date = "2023-12-01"
+
+[env.production]
+route = "resume.yourdomain.com"
+zone_id = "your-zone-id"
+
+# Pages configuration
+pages_build_output_dir = "."
