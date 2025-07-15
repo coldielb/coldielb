@@ -1,21 +1,355 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="description" content="j's personal site with some stuff that is kinda cool" />
-    
-    <!-- Resource hints for preloading blog data -->
-    <link rel="preconnect" href="/" />
-    <link rel="prefetch" href="/blog/posts.json" />
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Your Name - Resume</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
 
-    <link rel="preloading" href="/image.jpg" as="image" />
+        body {
+            background-color: #000;
+            color: #fff;
+            font-family: 'JetBrains Mono', monospace;
+            line-height: 1.6;
+            padding: 2rem;
+            max-width: 800px;
+            margin: 0 auto;
+        }
 
-    <title>j | something to do with computers idk</title>
-  </head>
-  <body>
-    <div id="root"></div>
-    <script type="module" src="/src/main.jsx"></script>
-  </body>
+        .header {
+            margin-bottom: 3rem;
+            border-bottom: 1px solid #333;
+            padding-bottom: 2rem;
+        }
+
+        .name {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            background: linear-gradient(135deg, #00ffff, #8a2be2);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .title {
+            font-size: 1.2rem;
+            font-weight: 400;
+            margin-bottom: 1rem;
+            background: linear-gradient(135deg, #00ffff, #8a2be2);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .contact {
+            display: flex;
+            gap: 2rem;
+            font-size: 0.9rem;
+            color: #888;
+        }
+
+        .section {
+            margin-bottom: 3rem;
+        }
+
+        .section-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 1.5rem;
+            background: linear-gradient(135deg, #00ffff, #8a2be2);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+        }
+
+        .job {
+            margin-bottom: 2rem;
+            padding-bottom: 1.5rem;
+            border-bottom: 1px solid #222;
+        }
+
+        .job:last-child {
+            border-bottom: none;
+        }
+
+        .job-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 0.5rem;
+        }
+
+        .job-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            background: linear-gradient(135deg, #00ffff, #8a2be2);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .job-duration {
+            font-size: 0.9rem;
+            background: linear-gradient(135deg, #00ffff, #8a2be2);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .job-company {
+            font-size: 1rem;
+            color: #ccc;
+            margin-bottom: 0.5rem;
+        }
+
+        .job-description {
+            font-size: 0.9rem;
+            color: #888;
+            line-height: 1.5;
+        }
+
+        .skills {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+        }
+
+        .skill {
+            background-color: #111;
+            background: linear-gradient(135deg, #00ffff, #8a2be2);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            padding: 0.25rem 0.75rem;
+            border-radius: 0.25rem;
+            font-size: 0.8rem;
+            border: 1px solid #333;
+        }
+
+        .projects {
+            margin-bottom: 2rem;
+        }
+
+        .project {
+            margin-bottom: 1.5rem;
+            padding: 1rem;
+            border: 1px solid #333;
+            border-radius: 0.25rem;
+        }
+
+        .project-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            background: linear-gradient(135deg, #00ffff, #8a2be2);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 0.5rem;
+        }
+
+        .project-description {
+            font-size: 0.9rem;
+            color: #888;
+            margin-bottom: 0.5rem;
+        }
+
+        .project-tech {
+            font-size: 0.8rem;
+            background: linear-gradient(135deg, #00ffff, #8a2be2);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .education {
+            margin-bottom: 1.5rem;
+        }
+
+        .education-item {
+            margin-bottom: 1rem;
+        }
+
+        .education-degree {
+            font-size: 1rem;
+            font-weight: 600;
+            background: linear-gradient(135deg, #00ffff, #8a2be2);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .education-school {
+            font-size: 0.9rem;
+            color: #ccc;
+        }
+
+        .education-year {
+            font-size: 0.8rem;
+            color: #888;
+        }
+
+        @media (max-width: 768px) {
+            body {
+                padding: 1rem;
+            }
+
+            .name {
+                font-size: 2rem;
+            }
+
+            .contact {
+                flex-direction: column;
+                gap: 0.5rem;
+            }
+
+            .job-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 0.25rem;
+            }
+
+            .skills {
+                gap: 0.25rem;
+            }
+
+            .skill {
+                font-size: 0.7rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1 class="name">Your Name</h1>
+        <h2 class="title">Full Stack Developer</h2>
+        <div class="contact">
+            <span>hello@yourname.com</span>
+            <span>+1 (555) 123-4567</span>
+            <span>San Francisco, CA</span>
+            <span>github.com/yourusername</span>
+        </div>
+    </div>
+
+    <div class="section">
+        <h3 class="section-title">Experience</h3>
+        
+        <div class="job">
+            <div class="job-header">
+                <div class="job-title">Senior Full Stack Developer</div>
+                <div class="job-duration">2022 - Present</div>
+            </div>
+            <div class="job-company">Tech Innovations Inc.</div>
+            <div class="job-description">
+                Led development of microservices architecture serving 10M+ users. Reduced application load time by 40% through performance optimization. Mentored 3 junior developers and established code review standards.
+            </div>
+        </div>
+
+        <div class="job">
+            <div class="job-header">
+                <div class="job-title">Full Stack Developer</div>
+                <div class="job-duration">2020 - 2022</div>
+            </div>
+            <div class="job-company">Digital Solutions LLC</div>
+            <div class="job-description">
+                Built responsive web applications for 15+ clients. Integrated third-party APIs and payment systems. Improved client satisfaction scores by 25%.
+            </div>
+        </div>
+
+        <div class="job">
+            <div class="job-header">
+                <div class="job-title">Frontend Developer</div>
+                <div class="job-duration">2019 - 2020</div>
+            </div>
+            <div class="job-company">StartupXYZ</div>
+            <div class="job-description">
+                Developed user-facing features for SaaS platform. Implemented responsive design for mobile and desktop. Reduced bug reports by 30%.
+            </div>
+        </div>
+    </div>
+
+    <div class="section">
+        <h3 class="section-title">Skills</h3>
+        <div class="skills">
+            <span class="skill">JavaScript</span>
+            <span class="skill">TypeScript</span>
+            <span class="skill">React</span>
+            <span class="skill">Node.js</span>
+            <span class="skill">Python</span>
+            <span class="skill">PostgreSQL</span>
+            <span class="skill">MongoDB</span>
+            <span class="skill">AWS</span>
+            <span class="skill">Docker</span>
+            <span class="skill">Kubernetes</span>
+            <span class="skill">Git</span>
+            <span class="skill">Linux</span>
+        </div>
+    </div>
+
+    <div class="section">
+        <h3 class="section-title">Projects</h3>
+        
+        <div class="project">
+            <div class="project-title">E-Commerce Platform</div>
+            <div class="project-description">
+                Modern e-commerce platform with real-time inventory management and secure payment processing. Built with React and Node.js.
+            </div>
+            <div class="project-tech">React • Node.js • MongoDB • Stripe • AWS</div>
+        </div>
+
+        <div class="project">
+            <div class="project-title">Task Management App</div>
+            <div class="project-description">
+                Collaborative task management application with real-time updates and team features. Supports drag-and-drop interface.
+            </div>
+            <div class="project-tech">Vue.js • Firebase • Tailwind CSS • Socket.io</div>
+        </div>
+
+        <div class="project">
+            <div class="project-title">API Gateway Service</div>
+            <div class="project-description">
+                Microservices API gateway with authentication, rate limiting, and monitoring. Handles 100K+ requests per day.
+            </div>
+            <div class="project-tech">Node.js • Express • Redis • Docker • PostgreSQL</div>
+        </div>
+    </div>
+
+    <div class="section">
+        <h3 class="section-title">Education</h3>
+        
+        <div class="education">
+            <div class="education-item">
+                <div class="education-degree">Master of Science in Software Engineering</div>
+                <div class="education-school">Tech Institute</div>
+                <div class="education-year">2020</div>
+            </div>
+            
+            <div class="education-item">
+                <div class="education-degree">Bachelor of Science in Computer Science</div>
+                <div class="education-school">University of Technology</div>
+                <div class="education-year">2018</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="section">
+        <h3 class="section-title">Certifications</h3>
+        <div class="skills">
+            <span class="skill">AWS Certified Solutions Architect</span>
+            <span class="skill">Google Cloud Professional Developer</span>
+            <span class="skill">Certified Kubernetes Administrator</span>
+            <span class="skill">MongoDB Certified Developer</span>
+        </div>
+    </div>
+</body>
 </html>
