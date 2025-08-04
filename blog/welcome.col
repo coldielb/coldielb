@@ -1,0 +1,92 @@
+---
+title: Welcome to My Blog
+date: 2025-01-15
+author: Jason Weiss Zeledon
+tags: welcome, meta, introduction
+---
+
+<preview>
+Welcome to my technical blog where I share thoughts on systems programming, language design, and software engineering. This is the first post showcasing the .col format and parser I've built.
+</preview>
+
+# Welcome to My Blog
+
+Hello and welcome to my technical blog! I'm excited to share this space where I'll be writing about **systems programming**, *language design*, and various aspects of software engineering.
+
+## What You'll Find Here
+
+This blog is built using a custom file format called `.col` that I've designed specifically for technical writing. Here's what makes it special:
+
+- **Markdown-like syntax** for easy writing
+- **HTML passthrough** for complex formatting
+- **Custom preview tags** for blog post summaries
+- **Built-in metadata support** for titles, dates, and tags
+
+### Features of the .col Format
+
+The `.col` format supports all the standard markdown features you'd expect:
+
+1. **Headers** from H1 to H6
+2. **Text formatting** like *italic* and **bold**
+3. **Code blocks** and `inline code`
+4. **Lists** both ordered and unordered
+5. **Links** and images
+6. **Blockquotes** for important information
+
+> This is an example blockquote. It's perfect for highlighting important information or quotes from other sources.
+
+#### Code Examples
+
+Here's a simple Rust function that demonstrates memory safety:
+
+```rust
+fn safe_divide(a: i32, b: i32) -> Option<i32> {
+    if b == 0 {
+        None
+    } else {
+        Some(a / b)
+    }
+}
+
+fn main() {
+    match safe_divide(10, 2) {
+        Some(result) => println!("Result: {}", result),
+        None => println!("Cannot divide by zero!"),
+    }
+}
+```
+
+This example shows how Rust's type system helps prevent runtime errors by making division by zero explicit through the `Option` type.
+
+## What's Coming Next
+
+In upcoming posts, I'll be diving deep into:
+
+- **Memory safety in systems programming languages**
+- **Building parsers and interpreters**
+- **Compiler design principles**
+- **Performance optimization techniques**
+- **Language design philosophy**
+
+### Custom HTML Integration
+
+The `.col` format also supports custom HTML when you need more control:
+
+<div style="border: 1px solid #333; padding: 1rem; border-radius: 0.5rem; background-color: #111; margin: 1rem 0;">
+  <strong style="color: #00ffff;">Pro Tip:</strong> You can mix markdown and HTML seamlessly in .col files. This gives you the best of both worlds - the simplicity of markdown with the power of HTML when you need it.
+</div>
+
+## Technical Implementation
+
+The parser I built handles:
+
+- **XSS prevention** through HTML sanitization
+- **Performance optimization** for large documents
+- **Error handling** with detailed error messages
+- **Extensibility** for future format additions
+
+---
+
+Thanks for reading, and I hope you enjoy the content I'll be sharing here. Feel free to reach out if you have any questions or suggestions for future topics!
+
+*Happy coding!* 🚀

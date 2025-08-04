@@ -1,0 +1,695 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title id="pageTitle">Loading... - Jason Weiss Zeledon</title>
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+        <link
+            href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;600;700&display=swap"
+            rel="stylesheet"
+        />
+        <style>
+            * {
+                margin: 0;
+                padding: 0;
+                box-sizing: border-box;
+            }
+
+            body {
+                background-color: #000;
+                color: #fff;
+                font-family: "JetBrains Mono", monospace;
+                line-height: 1.6;
+                padding: 2rem;
+                max-width: 900px;
+                margin: 0 auto;
+            }
+
+            .header {
+                margin-bottom: 3rem;
+                border-bottom: 1px solid #333;
+                padding-bottom: 2rem;
+            }
+
+            .site-title {
+                font-size: 2.5rem;
+                font-weight: 700;
+                margin-bottom: 0.5rem;
+                background: linear-gradient(135deg, #00ffff, #8a2be2);
+                -webkit-background-clip: text;
+                -webkit-text-fill-color: transparent;
+                background-clip: text;
+            }
+
+            .site-subtitle {
+                font-size: 1.2rem;
+                font-weight: 400;
+                margin-bottom: 1rem;
+                color: #888;
+            }
+
+            .nav {
+                display: flex;
+                gap: 2rem;
+                font-size: 0.9rem;
+            }
+
+            .nav a {
+                color: #888;
+                text-decoration: none;
+                transition: color 0.2s ease;
+            }
+
+            .nav a:hover {
+                color: #00ffff;
+            }
+
+            .loading {
+                text-align: center;
+                color: #888;
+                font-style: italic;
+                padding: 4rem 2rem;
+            }
+
+            .error {
+                color: #ff6b6b;
+                text-align: center;
+                padding: 2rem;
+                border: 1px solid #ff6b6b;
+                border-radius: 0.5rem;
+                background-color: rgba(255, 107, 107, 0.1);
+                margin: 2rem 0;
+            }
+
+            .post-container {
+                display: none;
+            }
+
+            .post-container.loaded {
+                display: block;
+            }
+
+            .back-link {
+                display: inline-block;
+                margin-bottom: 2rem;
+                color: #888;
+                text-decoration: none;
+                font-size: 0.9rem;
+                transition: color 0.2s ease;
+            }
+
+            .back-link:hover {
+                color: #00ffff;
+            }
+
+            .back-link::before {
+                content: "← ";
+            }
+
+            .post-meta {
+                border-bottom: 1px solid #333;
+                padding-bottom: 2rem;
+                margin-bottom: 3rem;
+            }
+
+            .post-title {
+                font-size: 2.5rem;
+                font-weight: 700;
+                margin-bottom: 1rem;
+                background: linear-gradient(135deg, #00ffff, #8a2be2);
+                -webkit-background-clip: text;
+                -webkit-text-fill-color: transparent;
+                background-clip: text;
+                line-height: 1.2;
+            }
+
+            .post-meta-info {
+                display: flex;
+                gap: 2rem;
+                font-size: 0.9rem;
+                color: #888;
+                margin-bottom: 1rem;
+                flex-wrap: wrap;
+            }
+
+            .post-tags {
+                display: flex;
+                gap: 0.5rem;
+                flex-wrap: wrap;
+            }
+
+            .post-tag {
+                background-color: #111;
+                color: #00ffff;
+                padding: 0.25rem 0.5rem;
+                border-radius: 0.25rem;
+                font-size: 0.8rem;
+                border: 1px solid #333;
+            }
+
+            .post-content {
+                max-width: 100%;
+                overflow-wrap: break-word;
+            }
+
+            /* Blog content styles from the parser */
+            .blog-content {
+                font-family: "JetBrains Mono", monospace;
+                line-height: 1.6;
+                color: #fff;
+            }
+
+            .blog-heading {
+                background: linear-gradient(135deg, #00ffff, #8a2be2);
+                -webkit-background-clip: text;
+                -webkit-text-fill-color: transparent;
+                background-clip: text;
+                margin: 2.5rem 0 1.5rem 0;
+                font-weight: 600;
+            }
+
+            .blog-heading:first-child {
+                margin-top: 0;
+            }
+
+            .blog-paragraph {
+                margin: 1.5rem 0;
+                color: #ccc;
+            }
+
+            .blog-bold {
+                font-weight: 600;
+                background: linear-gradient(135deg, #00ffff, #8a2be2);
+                -webkit-background-clip: text;
+                -webkit-text-fill-color: transparent;
+                background-clip: text;
+            }
+
+            .blog-italic {
+                font-style: italic;
+                color: #aaa;
+            }
+
+            .blog-inline-code {
+                background-color: #111;
+                color: #00ffff;
+                padding: 0.2rem 0.4rem;
+                border-radius: 0.25rem;
+                font-size: 0.9em;
+                border: 1px solid #333;
+            }
+
+            .blog-code-block {
+                background-color: #111;
+                color: #ccc;
+                padding: 1.5rem;
+                border-radius: 0.5rem;
+                overflow-x: auto;
+                margin: 2rem 0;
+                border: 1px solid #333;
+            }
+
+            .blog-code {
+                font-family: "JetBrains Mono", monospace;
+                font-size: 0.9em;
+            }
+
+            .blog-link {
+                color: #00ffff;
+                text-decoration: none;
+                border-bottom: 1px solid transparent;
+                transition: border-color 0.2s ease;
+            }
+
+            .blog-link:hover {
+                border-bottom-color: #00ffff;
+            }
+
+            .blog-image {
+                max-width: 100%;
+                height: auto;
+                border-radius: 0.5rem;
+                margin: 2rem 0;
+                border: 1px solid #333;
+                display: block;
+            }
+
+            .blog-list {
+                margin: 1.5rem 0;
+                padding-left: 2rem;
+            }
+
+            .blog-list-item {
+                margin: 0.5rem 0;
+                color: #ccc;
+            }
+
+            .blog-ordered-list {
+                list-style-type: decimal;
+            }
+
+            .blog-blockquote {
+                border-left: 4px solid #8a2be2;
+                padding-left: 1.5rem;
+                margin: 2rem 0;
+                color: #aaa;
+                font-style: italic;
+            }
+
+            .blog-hr {
+                border: none;
+                height: 1px;
+                background: linear-gradient(135deg, #00ffff, #8a2be2);
+                margin: 3rem 0;
+            }
+
+            .post-footer {
+                margin-top: 4rem;
+                padding-top: 2rem;
+                border-top: 1px solid #333;
+                text-align: center;
+            }
+
+            .share-buttons {
+                display: flex;
+                gap: 1rem;
+                justify-content: center;
+                margin-bottom: 2rem;
+                flex-wrap: wrap;
+            }
+
+            .share-button {
+                background-color: #111;
+                color: #888;
+                padding: 0.5rem 1rem;
+                border-radius: 0.25rem;
+                text-decoration: none;
+                font-size: 0.8rem;
+                border: 1px solid #333;
+                transition: all 0.2s ease;
+            }
+
+            .share-button:hover {
+                color: #00ffff;
+                border-color: #00ffff;
+            }
+
+            .post-navigation {
+                display: flex;
+                justify-content: space-between;
+                margin-top: 2rem;
+                gap: 1rem;
+            }
+
+            .nav-link {
+                flex: 1;
+                padding: 1rem;
+                background-color: #111;
+                border: 1px solid #333;
+                border-radius: 0.5rem;
+                text-decoration: none;
+                color: #888;
+                transition: all 0.2s ease;
+            }
+
+            .nav-link:hover {
+                border-color: #00ffff;
+                color: #fff;
+            }
+
+            .nav-link.prev {
+                text-align: left;
+            }
+
+            .nav-link.next {
+                text-align: right;
+            }
+
+            .nav-label {
+                font-size: 0.7rem;
+                text-transform: uppercase;
+                letter-spacing: 0.1em;
+                margin-bottom: 0.5rem;
+                display: block;
+            }
+
+            .nav-title {
+                font-size: 0.9rem;
+                font-weight: 500;
+            }
+
+            .reading-progress {
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 0%;
+                height: 3px;
+                background: linear-gradient(135deg, #00ffff, #8a2be2);
+                z-index: 1000;
+                transition: width 0.1s ease;
+            }
+
+            @media (max-width: 768px) {
+                body {
+                    padding: 1rem;
+                }
+
+                .site-title {
+                    font-size: 2rem;
+                }
+
+                .nav {
+                    flex-direction: column;
+                    gap: 0.5rem;
+                }
+
+                .post-title {
+                    font-size: 1.8rem;
+                }
+
+                .post-meta-info {
+                    flex-direction: column;
+                    gap: 0.5rem;
+                }
+
+                .blog-code-block {
+                    padding: 1rem;
+                    margin: 1.5rem 0;
+                }
+
+                .blog-list {
+                    padding-left: 1.5rem;
+                }
+
+                .share-buttons {
+                    flex-direction: column;
+                    align-items: center;
+                }
+
+                .post-navigation {
+                    flex-direction: column;
+                }
+            }
+
+            /* Print styles */
+            @media print {
+                body {
+                    background-color: white;
+                    color: black;
+                    padding: 1rem;
+                }
+
+                .header, .back-link, .post-footer, .reading-progress {
+                    display: none;
+                }
+
+                .blog-heading, .post-title, .blog-bold {
+                    background: none;
+                    -webkit-text-fill-color: black;
+                    color: black;
+                }
+
+                .blog-code-block {
+                    background-color: #f5f5f5;
+                    color: black;
+                    border: 1px solid #ccc;
+                }
+
+                .blog-inline-code {
+                    background-color: #f0f0f0;
+                    color: black;
+                }
+            }
+        </style>
+    </head>
+    <body>
+        <div class="reading-progress" id="readingProgress"></div>
+        
+        <div class="header">
+            <h1 class="site-title">Jason Weiss Zeledon</h1>
+            <p class="site-subtitle">Full Stack Developer</p>
+            <nav class="nav">
+                <a href="index.html">Home</a>
+                <a href="blog.html">Blog</a>
+            </nav>
+        </div>
+
+        <div id="loadingIndicator" class="loading">
+            Loading blog post...
+        </div>
+
+        <div id="errorContainer"></div>
+
+        <div id="postContainer" class="post-container">
+            <a href="blog.html" class="back-link">Back to Blog</a>
+            
+            <article class="post">
+                <header class="post-meta">
+                    <h1 id="postTitle" class="post-title"></h1>
+                    <div id="postMetaInfo" class="post-meta-info"></div>
+                    <div id="postTags" class="post-tags"></div>
+                </header>
+                
+                <div id="postContent" class="post-content blog-content"></div>
+            </article>
+
+            <footer class="post-footer">
+                <div class="share-buttons">
+                    <a href="#" class="share-button" id="shareTwitter">Share on Twitter</a>
+                    <a href="#" class="share-button" id="shareLinkedIn">Share on LinkedIn</a>
+                    <a href="#" class="share-button" id="copyLink">Copy Link</a>
+                </div>
+                
+                <div class="post-navigation" id="postNavigation">
+                    <!-- Navigation will be populated by JavaScript -->
+                </div>
+            </footer>
+        </div>
+
+        <script src="js/col-parser.js"></script>
+        <script>
+            class BlogPost {
+                constructor() {
+                    this.parser = new ColParser();
+                    this.post = null;
+                    this.slug = null;
+                    
+                    this.loadingIndicator = document.getElementById('loadingIndicator');
+                    this.errorContainer = document.getElementById('errorContainer');
+                    this.postContainer = document.getElementById('postContainer');
+                    this.readingProgress = document.getElementById('readingProgress');
+                    
+                    this.init();
+                }
+
+                async init() {
+                    try {
+                        this.slug = this.getSlugFromUrl();
+                        if (!this.slug) {
+                            throw new Error('No blog post specified');
+                        }
+
+                        await this.loadPost();
+                        this.renderPost();
+                        this.setupEventListeners();
+                        this.setupReadingProgress();
+                        this.setupShareButtons();
+                        
+                        this.hideLoading();
+                        this.showPost();
+                        
+                    } catch (error) {
+                        this.showError(error.message);
+                    }
+                }
+
+                getSlugFromUrl() {
+                    const urlParams = new URLSearchParams(window.location.search);
+                    return urlParams.get('slug');
+                }
+
+                async loadPost() {
+                    try {
+                        this.post = await this.parser.loadFile(`blog/${this.slug}.col`);
+                    } catch (error) {
+                        throw new Error(`Failed to load blog post: ${error.message}`);
+                    }
+                }
+
+                renderPost() {
+                    // Update page title
+                    document.getElementById('pageTitle').textContent = 
+                        `${this.post.metadata.title} - Jason Weiss Zeledon`;
+                    
+                    // Set post title
+                    document.getElementById('postTitle').textContent = this.post.metadata.title;
+                    
+                    // Set meta information
+                    const formattedDate = new Date(this.post.metadata.date).toLocaleDateString('en-US', {
+                        year: 'numeric',
+                        month: 'long',
+                        day: 'numeric'
+                    });
+                    
+                    document.getElementById('postMetaInfo').innerHTML = `
+                        <span>By ${this.escapeHtml(this.post.metadata.author)}</span>
+                        <span>${formattedDate}</span>
+                        <span>${this.post.wordCount} words</span>
+                        <span>${this.post.estimatedReadTime} min read</span>
+                    `;
+                    
+                    // Set tags
+                    if (this.post.metadata.tags.length > 0) {
+                        document.getElementById('postTags').innerHTML = 
+                            this.post.metadata.tags.map(tag => 
+                                `<span class="post-tag">${this.escapeHtml(tag)}</span>`
+                            ).join('');
+                    }
+                    
+                    // Set content
+                    document.getElementById('postContent').innerHTML = this.post.content;
+                    
+                    // Add meta tags for SEO and social sharing
+                    this.addMetaTags();
+                }
+
+                addMetaTags() {
+                    const head = document.head;
+                    
+                    // Remove existing meta tags
+                    const existingMetas = head.querySelectorAll('meta[name^="description"], meta[property^="og:"], meta[name="twitter:"]');
+                    existingMetas.forEach(meta => meta.remove());
+                    
+                    // Description
+                    const description = this.post.preview || 
+                        this.post.content.replace(/<[^>]*>/g, '').substring(0, 160) + '...';
+                    
+                    const metaTags = [
+                        { name: 'description', content: description },
+                        { property: 'og:title', content: this.post.metadata.title },
+                        { property: 'og:description', content: description },
+                        { property: 'og:type', content: 'article' },
+                        { property: 'og:url', content: window.location.href },
+                        { property: 'article:author', content: this.post.metadata.author },
+                        { property: 'article:published_time', content: this.post.metadata.date },
+                        { name: 'twitter:card', content: 'summary' },
+                        { name: 'twitter:title', content: this.post.metadata.title },
+                        { name: 'twitter:description', content: description }
+                    ];
+                    
+                    metaTags.forEach(tag => {
+                        const meta = document.createElement('meta');
+                        if (tag.name) meta.name = tag.name;
+                        if (tag.property) meta.property = tag.property;
+                        meta.content = tag.content;
+                        head.appendChild(meta);
+                    });
+                }
+
+                setupEventListeners() {
+                    // Smooth scrolling for anchor links
+                    document.addEventListener('click', (e) => {
+                        if (e.target.tagName === 'A' && e.target.getAttribute('href')?.startsWith('#')) {
+                            e.preventDefault();
+                            const target = document.getElementById(e.target.getAttribute('href').slice(1));
+                            if (target) {
+                                target.scrollIntoView({ behavior: 'smooth' });
+                            }
+                        }
+                    });
+
+                    // Keyboard navigation
+                    document.addEventListener('keydown', (e) => {
+                        if (e.key === 'Escape') {
+                            window.location.href = 'blog.html';
+                        }
+                    });
+                }
+
+                setupReadingProgress() {
+                    const updateProgress = () => {
+                        const article = document.querySelector('.post');
+                        if (!article) return;
+                        
+                        const articleTop = article.offsetTop;
+                        const articleHeight = article.offsetHeight;
+                        const windowHeight = window.innerHeight;
+                        const scrollTop = window.pageYOffset;
+                        
+                        const progress = Math.min(
+                            Math.max((scrollTop - articleTop + windowHeight * 0.3) / articleHeight, 0),
+                            1
+                        );
+                        
+                        this.readingProgress.style.width = `${progress * 100}%`;
+                    };
+
+                    window.addEventListener('scroll', updateProgress);
+                    window.addEventListener('resize', updateProgress);
+                    updateProgress();
+                }
+
+                setupShareButtons() {
+                    const url = encodeURIComponent(window.location.href);
+                    const title = encodeURIComponent(this.post.metadata.title);
+                    const description = encodeURIComponent(
+                        this.post.preview || 'Check out this blog post!'
+                    );
+
+                    document.getElementById('shareTwitter').href = 
+                        `https://twitter.com/intent/tweet?url=${url}&text=${title}`;
+                    
+                    document.getElementById('shareLinkedIn').href = 
+                        `https://www.linkedin.com/sharing/share-offsite/?url=${url}`;
+                    
+                    document.getElementById('copyLink').addEventListener('click', async (e) => {
+                        e.preventDefault();
+                        try {
+                            await navigator.clipboard.writeText(window.location.href);
+                            const button = e.target;
+                            const originalText = button.textContent;
+                            button.textContent = 'Copied!';
+                            setTimeout(() => {
+                                button.textContent = originalText;
+                            }, 2000);
+                        } catch (error) {
+                            console.error('Failed to copy link:', error);
+                        }
+                    });
+                }
+
+                hideLoading() {
+                    this.loadingIndicator.style.display = 'none';
+                }
+
+                showPost() {
+                    this.postContainer.classList.add('loaded');
+                }
+
+                showError(message) {
+                    this.loadingIndicator.style.display = 'none';
+                    this.errorContainer.innerHTML = `
+                        <div class="error">
+                            <strong>Error:</strong> ${this.escapeHtml(message)}
+                            <br><br>
+                            <a href="blog.html" style="color: #00ffff;">← Back to Blog</a>
+                        </div>
+                    `;
+                }
+
+                escapeHtml(text) {
+                    const div = document.createElement('div');
+                    div.textContent = text;
+                    return div.innerHTML;
+                }
+            }
+
+            // Initialize blog post when DOM is loaded
+            document.addEventListener('DOMContentLoaded', () => {
+                new BlogPost();
+            });
+        </script>
+    </body>
+</html>

@@ -1,0 +1,7 @@
+{
+  "posts": [
+    "welcome.col",
+    "rust-memory-safety.col",
+    "building-parsers.col"
+  ]
+}
