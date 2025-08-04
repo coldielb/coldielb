@@ -1,0 +1,69 @@
+---
+title: LLMs Are Getting Stupider? Or Maybe We Are...
+date: 2025-08-05
+author: Jason Weiss Zeledon
+tags: AI, LLMs, Machine Learning, Language, Coding
+---
+
+<preview>
+many of us use AI (LLMs specifically) to assist us on a variety of tasks. from simple questions we traditionally would have googled to writing whole essays. but are we actually benefitting from this ideal of "have it do everything and sit back and watch"?
+</preview>
+
+AI is powerful and believe it or not, we use it every day. from autocorrect to chess engines, we've all been exposed to AI at some point. however, this post isn't about those types of machine learning tools. i think it's safe to say that those models typically benefit society and are just... fun.
+
+but in 2023, a new type of AI was boosted into mainstream popularity: LLMs. large language models themselves aren't new. they've been around for about a decade. however, 2023 was particularly meaningful because ChatGPT was the first LLM that was coherent, could write stories, could answer questions about the world with decent accuracy, and more importantly, was accessible to everyone.
+
+and in 2023, i'd say that moment was genuinely beneficial to society. this is because you couldn't actually use ChatGPT for anything *truly* consequential. sure, it could write emails or answer "why is the sky blue?", but it couldn't take real actions, so adoption into critical workflows was either minimal or outright banned by institutions.
+
+i remember thinking to myself, "this AI is stupid" after it failed to summarize a poem for my class, only to discover it was referencing a poem that didn't exist. that led to me being generally skeptical of LLM output because they don't actually *know* what they're saying, they can only predict what token comes next.
+
+but as developers began adding tools and real-world integration capabilities, i started coming around. Claude 2 blew me away because it could not only write well, but maintain coherence across revisions and edits. i first used AI to write a school essay just to experiment, and i was amazed at how far LLM advancements had come.
+
+by 2024, i was fully convinced that LLMs were not only here to stay, but incredibly helpful for my work. need an email? Claude. lab report? Claude. the one area where LLMs really struggled though? coding.
+
+and here's where the problem starts. give someone a tool that makes their life easier, and they'll eventually use it as a crutch.
+
+i wouldn't say i'm quite there yet because i've tried to set boundaries, but i watched classmates rely on AI to the point where they'd use it for literally everything. for me, i'd use AI to write a draft, then heavily edit it because it doesn't match my voice, then refine it further. some people took it to the extreme.
+
+i remember peer-reviewing someone's essay and immediately recognizing it as AI generated. just to test my theory, i fed all my revision notes to Claude and asked it to rewrite based on my critiques. when we got to round two of peer reviews, our essays were nearly identical. personally, i don't care. it's not my job to police AI usage. but it illustrated something concerning.
+
+early AI models couldn't handle even medium-difficulty leetcode problems, so for the first few months of 2024 i coded without AI assistance. that changed when Anthropic dropped Claude 3 Opus, which was genuinely impressive at code generation and could even request to see relevant files.
+
+as an experiment, i built a discord bot called Arx entirely with AI help. but when i wanted to add features or clean up the code later, i couldn't. the AI couldn't maintain context or architectural decisions across sessions. until Sonnet 3.5, i was writing 90%+ of my code manually.
+
+Sonnet 3.5 was far better at coding and could handle feature additions, but it was lazy. it would use placeholders for code it "knew" was already there, leading to broken implementations. eventually, i gave up on AI coding entirely and went back to using it only for tasks i genuinely didn't want to do.
+
+so why is AI making us "stupider"? because it demonstrably is.
+
+as someone certified in python programming, i can confidently say that when i need to code something in python now, my first instinct is to pass it off to AI. maybe part of me thinks i don't need to keep practicing that language, but i can definitively say i've lost some of my python fluency.
+
+this applies to everyone, regardless of field. AI doesn't leave room for exploration or discovery. need something googled? ChatGPT just gives you the answer without fostering critical thinking. sure, questions like "where should i eat tonight?" don't require deep analysis, but AI should walk us through solutions rather than just providing answers.
+
+## slop
+when i ask for a web app to track finances, we shouldn't just let AI build it entirely. this leads to slop. barely functional code published by people who don't understand what they're deploying. while you *can* get something useful with enough prompt engineering, that's rare. most AI-generated applications are security nightmares built by people who can't maintain or debug them.
+
+this isn't just about coding. we're seeing AI generated content flooding everything from academic papers to creative writing, often with obvious tells that the author didn't understand the subject matter or that the author didn't even care to remove em-dashes.
+
+## accessibility
+i do believe coding should be more accessible, especially for creative people with ideas but no technical skills. but AI should teach you to fish, not just give you a fish. instead of building a backend for you, it should explain how backends work and guide you through building one yourself for your project.
+
+the current approach creates a false sense of capability. people think they can build complex applications because AI wrote the code, but they can't debug, maintain, or improve it. they're not learning the underlying principles that would let them innovate or solve novel problems.
+
+## are llms getting stupider?
+i don't think LLMs are getting stupider. if anything, they're getting more capable. the problem is that as they get better at doing things *for* us, we get worse at doing those things *ourselves*. we have become far too reliant on these systems that aren't perfect, aren't 100% accurate and can make pretty damning mistakes.
+
+it's like using GPS for navigation. incredibly useful, but studies show people who rely on GPS lose their spatial reasoning skills over time. they can get from A to B, but they can't read maps or navigate without turn-by-turn directions.
+
+## balance
+the solution isn't to abandon AI entirely because that would be like swearing off calculators because they make us worse at mental math. instead, we need to be super intentional about *when* and *how* we use these tools.
+
+for coding, i've started using AI for boilerplate and research, but forcing myself to write the core logic manually. for writing, i'll use it to overcome writer's block or suggest different phrasings, but the ideas and structure need to be mine.
+
+the goal should be augmentation, not replacement. AI should make us more capable, not more dependent.
+
+## the bigger picture
+we're at a crucial point where these tools are powerful enough to handle complex tasks but not quite reliable enough to trust completely. the danger is that we'll lose the skills needed to catch their mistakes or to innovate beyond what they can generate.
+
+if we're not careful, we'll end up with a generation of people who can prompt AI but can't actually *do* the thing they're prompting for. that's not progress. that's just outsourcing our thinking to machines that don't actually think. pretty dystopian if you ask me.
+
+so yeah, LLMs aren't getting stupider. but if we keep using them as a crutch instead of a tool, we definitely are.
