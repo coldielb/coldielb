@@ -368,6 +368,12 @@
                         const loadPromises = postFiles.map(async (filename) => {
                             try {
                                 const parsed = await this.parser.loadFile(`blog/${filename}`);
+                                
+                                // Ensure metadata.tags is always an array
+                                if (!parsed.metadata.tags || !Array.isArray(parsed.metadata.tags)) {
+                                    parsed.metadata.tags = [];
+                                }
+                                
                                 return {
                                     filename,
                                     slug: filename.replace('.col', ''),
@@ -382,6 +388,12 @@
                         const results = await Promise.all(loadPromises);
                         this.posts = results.filter(post => post !== null);
                         this.filteredPosts = [...this.posts];
+
+                        // Debug logging
+                        console.log('Loaded posts:', this.posts);
+                        this.posts.forEach(post => {
+                            console.log(`Post: ${post.metadata.title}, Tags:`, post.metadata.tags);
+                        });
 
                         // Sort by date (newest first) by default
                         this.sortPosts('date-desc');

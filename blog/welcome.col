@@ -1,92 +1,32 @@
 ---
-title: Welcome to My Blog
-date: 2025-01-15
+title: Howdy!
+date: 2025-08-04
 author: Jason Weiss Zeledon
 tags: welcome, meta, introduction
 ---
 
 <preview>
-Welcome to my technical blog where I share thoughts on systems programming, language design, and software engineering. This is the first post showcasing the .col format and parser I've built.
+just a little bit about me, some things you can expect from this blog and then i also cover how i write them
 </preview>
 
-# Welcome to My Blog
+## about me
 
-Hello and welcome to my technical blog! I'm excited to share this space where I'll be writing about **systems programming**, *language design*, and various aspects of software engineering.
+hey, i'm jason, you can find me under a few names online (most common among them col or coldie). i started coding in 8th grade, when i was a wee young lad and didnt know what react was.
+my first language i ever learned was javascript (vanilla). i then learned java in high school and learned that javascript *is not* related to java. silly me.
+i then learned python, got into datascience and eventually learned C. from there i began getting into light systems programming and arduinos (which use C++ but for the sake of simplicity it was basically C).
+Rust was a language that i was very hesitant to adopt because everyone said "if you hate C, try C++" and i did. i consider myself fairly well versed in C/C++ despite not really using them anymore. Rust eventually offered something more appealing to me that couldnt be offered by any other language except maybe interpreted languages (but only on a technicality). safety.
 
-## What You'll Find Here
+## what is rust? baby dont hurt me, dont hurt me no mo!
 
-This blog is built using a custom file format called `.col` that I've designed specifically for technical writing. Here's what makes it special:
+this isn't really an explanation of *what* rust is, but rather why i chose it. i didn't choose rust because it was the hot new language and everyone told me to use it. quite the opposite. Alli over at [Whaledev](https://discord.gg/czcbKPXVdF) was really the only person pushing me to use rust. and like i said, i wasn't too excited to learn a new language. i think what really made me move to rust was the familiarity. it felt (after i spent a good few weeks coding in rust every day) easier to write than even python. and i love python.
 
-- **Markdown-like syntax** for easy writing
-- **HTML passthrough** for complex formatting
-- **Custom preview tags** for blog post summaries
-- **Built-in metadata support** for titles, dates, and tags
+rust offered safety from my destructive self, where C didn't (which arguably is by design but still). rust forced me to adopt, in my opinion, good coding habits. i think that as verbose as rust is, it carriess over into some of my python projects where suddenly i am typing everything and making sure everything is in aa `try` & `catch`.
 
-### Features of the .col Format
+so yeah. i like rust. i dont love it but its pretty good all things considered and if you are looking to maybe have a bit more hand-holding, definitely recommend start [here](https://www.rust-lang.org/learn) or if you're more hands on, [this](https://github.com/rust-lang/rustlings/) is a good start too.
 
-The `.col` format supports all the standard markdown features you'd expect:
+## some more about me
 
-1. **Headers** from H1 to H6
-2. **Text formatting** like *italic* and **bold**
-3. **Code blocks** and `inline code`
-4. **Lists** both ordered and unordered
-5. **Links** and images
-6. **Blockquotes** for important information
+not many people know this other than my friends and some people online, but i am very "artsy". i make music, i draw, i read. everything antithetical to an engineering major. or is it? i brainstorm, ideate, test, refine, repeat. thats basically engineering at its finest.
+i love listening to all kinds of music and lately i've been listening to indie/folk rock type music. check out [Black Country, New Road](https://blackcountrynewroad.com) and also [Avi Kaplan](https://www.avikaplanofficial.com).
 
-> This is an example blockquote. It's perfect for highlighting important information or quotes from other sources.
-
-#### Code Examples
-
-Here's a simple Rust function that demonstrates memory safety:
-
-```rust
-fn safe_divide(a: i32, b: i32) -> Option<i32> {
-    if b == 0 {
-        None
-    } else {
-        Some(a / b)
-    }
-}
-
-fn main() {
-    match safe_divide(10, 2) {
-        Some(result) => println!("Result: {}", result),
-        None => println!("Cannot divide by zero!"),
-    }
-}
-```
-
-This example shows how Rust's type system helps prevent runtime errors by making division by zero explicit through the `Option` type.
-
-## What's Coming Next
-
-In upcoming posts, I'll be diving deep into:
-
-- **Memory safety in systems programming languages**
-- **Building parsers and interpreters**
-- **Compiler design principles**
-- **Performance optimization techniques**
-- **Language design philosophy**
-
-### Custom HTML Integration
-
-The `.col` format also supports custom HTML when you need more control:
-
-<div style="border: 1px solid #333; padding: 1rem; border-radius: 0.5rem; background-color: #111; margin: 1rem 0;">
-  <strong style="color: #00ffff;">Pro Tip:</strong> You can mix markdown and HTML seamlessly in .col files. This gives you the best of both worlds - the simplicity of markdown with the power of HTML when you need it.
-</div>
-
-## Technical Implementation
-
-The parser I built handles:
-
-- **XSS prevention** through HTML sanitization
-- **Performance optimization** for large documents
-- **Error handling** with detailed error messages
-- **Extensibility** for future format additions
-
----
-
-Thanks for reading, and I hope you enjoy the content I'll be sharing here. Feel free to reach out if you have any questions or suggestions for future topics!
-
-*Happy coding!* 🚀
+so yeah thats a bit about me. read some of my blogs and enjoy your time here.

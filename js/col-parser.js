@@ -353,13 +353,17 @@ class ColParser {
                 processedPreview = processedPreview.trim();
             }
 
+            const processedTags = metadata.tags ? metadata.tags.split(',').map(tag => tag.trim()) : [];
+            
             return {
                 metadata: {
                     title: metadata.title || 'Untitled',
                     date: metadata.date || new Date().toISOString().split('T')[0],
                     author: metadata.author || 'Anonymous',
-                    tags: metadata.tags ? metadata.tags.split(',').map(tag => tag.trim()) : [],
-                    ...metadata
+                    tags: processedTags,
+                    ...metadata,
+                    // Override the tags with processed version to prevent string overwrite
+                    tags: processedTags
                 },
                 preview: processedPreview,
                 content: processedContent.trim(),

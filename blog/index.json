@@ -1,7 +1,3 @@
 {
-  "posts": [
-    "welcome.col",
-    "rust-memory-safety.col",
-    "building-parsers.col"
-  ]
+  "posts": ["welcome.col", "writing-reve.col"]
 }

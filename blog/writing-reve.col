@@ -1,0 +1,48 @@
+---
+title: Creating A Programming Language
+date: 2025-08-05
+author: Jason Weiss Zeledon
+tags: programming, technical, langauge development
+---
+<preview>
+*(Last Updated: 08/04/2025)* my journey writing the programming language Reve
+</preview>
+
+## where to start?
+
+i guess the most logical starting point is what is Reve? why does Reve exist? what problem is Reve addressing? why is the github empty?
+all great questions... some of which i can answer.
+
+Reve is my dream python. no stupid environments to manage dependencies. i do not care. yes they exist for a reason, but tell me why langauges like javascript or even rust or C or whatever it may be, doesnt require you to create an environment, enable it, make sure its actually enabled, and then start coding in a language that, after working with rust, is unbearably slow.
+so that's what Reve aims to address.
+
+## Reve
+
+Reve doesn't mean anything, i just thought it was cool to say. you pronounce it like "reeee-vuh". anyways, Reve shares the EXACT same syntax as python. boom easy to learn. but it also support some super advanced features, python doesn't have.
+
+### memory management
+
+in python you don't have memory. you don't have to worry about it. and thats great and all, but if you want to... boy you are royally screwed. python just doesnt support it.
+Reve on the other hand allows macros, chief among them being `*#adv` which signifies that we wish to code outside the bounds of the basic language. now ideally, `adv` represents more than just memory management, and i have ideas, but this is a good challenging starting point. and obviously this syntax would deviate from traditional python but only for this.
+
+### semicolons? we love 'em! brackets? sure!
+
+one thing i amd now 50/50 about with python is the lack of brackets `{}` and semicolons `;`. growing up and using python it was easy to type and easy to read. but now, after working in C and Rust, its so much weirder. so Reve gives you that option. if you want to code in traditional python, you can. but if you want brackets and semicolons, you can do that too.
+and you'll see as we go further the main selling point of Reve is **options**. having options means you can decide what you want, how you want it, and when.
+
+### unsafe python? nay! unsafe Reve!
+
+rust has arguably one of the coolest features. Rust holds your hand, thats awesome. thats great, but sometimes the baby bird needs to wander. and guess what? rust has unsafe rust for those little birdies. so since we can allow Reve to access memory, i think it would be very cool to see Reve support unsafe Reve. maybe its not the same as rust, but it can have the same idea.
+using the `*#unsafe` macro you can easily declare when the code is unsafe and needs to be compiled... (oops i spolied it).
+
+### backwards compatibility with python
+
+python isnt bad and they have tons of libraries and since Reve has the same syntax it should be easier to get people to move over to our language. but that said, tools like numpy or pandas are so far the best library for data science out there. so Reve should support it.
+
+### interpreter first, compiler second
+
+python is interpreted, so Reve should too. in fact it uses Rust as its backend.
+that's all i have to say about that. kidding!
+
+Reve takes an approach i think makes sense, and most languages have to some extent. "interpret first, compile second". it makes sense because time is everything and its important to minimize the time you spend waiting for binary to compile.
+to me there is no reason you can't have something that is fast, dynamic and easy to learn.
