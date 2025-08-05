@@ -1,0 +1,94 @@
+---
+title: Your Side Project Will Never Make Money (And That's Fine)
+date: 2025-08-05
+author: Jason Weiss Zeledon
+tags: programming, music, side projects, hustle culture, learning
+---
+
+<preview>
+why does everything have to be about making money? sometimes building stuff just for the joy of building is enough. a rant about hustle culture, learning for its own sake, and why my $4 spotify royalties don't define my success as a musician.
+</preview>
+
+## the algorithm knows what sells
+try searching "10 coding projects to do when bored" on youtube. i'll wait.
+
+notice how the second or third video is inevitably "How I Made $10k/Month From a Project I Built in 3 Days" or some variation of that clickbait gold? it's everywhere. "Turn Your Hobby Into Passive Income!" "5 Side Hustles Every Developer Should Try!" "I Built an App and Retired at 25!"
+
+and look, good for those people if they actually did make money. but this obsession with monetizing everything is poisoning the well for everyone else who just wants to... i don't know... learn stuff?
+
+## when did learning become a side hustle?
+somewhere along the way, we collectively decided that if you're not extracting profit from an activity, you're wasting your time. can't just learn python for fun? better build a SaaS! can't just make music as a hobby? better get those spotify streams up! can't just write code to solve interesting problems? better think about how to turn this into a startup!
+
+this mindset is exhausting and, frankly, counterproductive.
+
+i've been coding for just under a decade now, and some of my most valuable learning experiences came from projects that would never, ever make money. building kozeig taught me more about language design and compiler theory than any tutorial or course ever could. will it ever compete with rust or python? absolutely not. did it teach me to think differently about how code gets parsed and executed? absolutely.
+
+but according to hustle culture, i "wasted" months building something with no market value. according to hustle culture, i should have been building the next uber for dogs or whatever.
+
+## the music parallel
+here's where my other creative outlet comes in. i make music. you can find it on spotify, apple music, all the usual places. i'm not going to drop my artist name here because this isn't a plug, but let's talk numbers.
+
+my latest albums has been out for about six months. it's gotten maybe 200 plays across all platforms. spotify paid me approximately $0.0032 per stream, which means i've made a whopping 44 cents from my music career.
+
+**44 cents**.
+
+by hustle culture standards, i'm a complete failure as a musician. i should quit, or pivot to making beats for tiktok influencers, or start a youtube channel about "how to make money making music" (which would probably make more money than actually making music, ironically).
+
+but i don't care about the 44 cents. i care about the fact that those 200 people heard something i created and maybe it made their commute a little better, or helped them focus while coding, or just gave them 45 minutes of something they hadn't heard before.
+
+## the feedback loop
+when i release music, i'm not checking my royalty dashboard obsessively (maybe just a little). i'm looking for feedback. did someone share it? did it resonate with anyone? did i get better at mixing compared to my last track?
+
+the same applies to side projects. when i put kozeig on github, i wasn't thinking about how to monetize a programming language (how would that even work?). i was curious if other people would find the syntax interesting, if they'd contribute ideas, if they'd point out flaws in my approach.
+
+that feedback, whether it's a github star, a thoughtful code review, or someone mentioning they tried building something similar, is infinitely more valuable than whatever pocket change i could theoretically extract from the project.
+
+## the learning tax
+every skill worth developing has what i call a "learning tax" which is the time and effort you invest before you're good enough for anyone to care about your output. with programming, it's those months of building todo apps and calculator GUIs that nobody will ever use. with music, it's the dozens of tracks you make that sound like shit.
+
+hustle culture wants you to skip the learning tax. it promises shortcuts and hacks to monetize your beginner level skills. "sell your coding bootcamp projects as freelance work!" "turn your first song into an NFT!"
+
+but they don't tell you the learning tax isn't optional. you can't skip it, and trying to extract money during that period usually makes you worse at the thing you're supposedly trying to get good at.
+
+when you're focused on monetization from day one, you optimize for what sells rather than what teaches. you build crud apps instead of exploring graphics programming. you make trap beats because they're popular instead of experimenting with weird time signatures.
+
+## the youtube problem
+youtube has made this worse by training us to think in terms of views and engagement metrics. even educational content gets warped by the algorithm's demands.
+
+i've watched genuinely talented developers pivot from making thoughtful tutorials to churning out "react developer reacts to..." content because it gets more views. musicians abandon experimental projects to make "lofi hip hop beats to study to" because the algorithm favors it.
+
+the platform rewards consistency and broad appeal over depth and creativity. so we get endless variations of the same "beginner projects" videos instead of deep dives into interesting problems.
+
+## why this matters beyond personal satisfaction
+this isn't just about individual fulfillment. it's the obsession with monetizing everything that is actively harming innovation and learning in tech.
+
+when every project needs a business model, we lose the weird, experimental stuff that often leads to breakthrough ideas. the web started as a side project. linux was a hobby. git was built because linus torvalds was annoyed with existing version control systems, not because he saw a market opportunity.
+
+if those creators had been focused on immediate monetization, we might not have the foundational technologies that power everything we use today.
+
+## the permission to just... build stuff
+so here's my modest proposal: give yourself permission to build things just because you want to build them.
+make that weird javascript framework that nobody asked for. write that CLI tool that solves your very specific problem. compose that ambient drone piece that puts people to sleep.
+you don't need to think about product-market fit or growth hacking or converting users to paid plans. you don't need to start a newsletter or build an audience or personal brand around it (i see the irony of me writing this).
+you can just... make stuff.
+
+## metrics that matter
+if you must track metrics (because sometimes it's motivating), track the ones that actually matter for growth:
+
+- did you learn something new?
+- did you solve a problem you couldn't solve before?
+- did you get feedback that helped you improve?
+- did you inspire someone else to try something similar?
+- did you have fun building it?
+
+these are the metrics that compound over time. these are what turn coding from a job into a craft, and music from background noise into art.
+
+## my 44 cent empire
+those 44 cents from spotify? they're not buying me a coffee anytime soon. but the process of making those tracks taught me about arrangement, mixing, sound design, music theory, and a dozen other things that make the next track better.
+the 200 people who listened? some of them probably skipped after 30 seconds. but maybe one person added it to a playlist, or showed it to a friend, or felt something while listening. that's worth more than any streaming royalty.
+kozeig might never have more than a few github stars. it'll never be featured in "top programming languages to learn in 2025" lists. but it taught me how compilers work, forced me to think about language design, and gave me a deeper appreciation for the tools i use every day.
+
+so let's reclaim the side project from the hustle culture vultures (hey that sorta rhymes). let's build things because we're curious about how they work. let's make music because we have something to say. let's write code because solving problems is fun.
+let's stop apologizing for projects that don't scale or monetize or go viral. let's stop measuring success in dollars and views and conversion rates.
+sometimes the best projects are the ones that teach you something, make you laugh, or just remind you why you fell in love with creating things in the first place.
+and if you happen to make 44 cents along the way? well, that's just a bonus.
