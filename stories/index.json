@@ -1,7 +1,3 @@
 {
-  "stories": [
-    "digital-dreams.col",
-    "the-last-commit.col",
-    "memory-leak.col"
-  ]
+  "stories": ["just-another-day.col", "i.col", "the-hollow.col"]
 }

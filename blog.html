@@ -119,7 +119,9 @@
                 border-radius: 0.5rem;
                 padding: 1.5rem;
                 background-color: #111;
-                transition: border-color 0.2s ease, background-color 0.2s ease;
+                transition:
+                    border-color 0.2s ease,
+                    background-color 0.2s ease;
                 cursor: pointer;
             }
 
@@ -277,28 +279,29 @@
     </head>
     <body>
         <div class="header">
-            <h1 class="site-title">Jason Weiss Zeledon</h1>
-            <p class="site-subtitle">Full Stack Developer</p>
+            <h1 class="site-title">frgmt.xyz</h1>
             <nav class="nav">
                 <a href="index.html">Home</a>
                 <a href="blog.html" class="active">Blog</a>
+                <a href="stories.html">Creative Works</a>
             </nav>
         </div>
 
         <div class="blog-header">
             <h2 class="blog-title">Blog Posts</h2>
             <p class="blog-description">
-                Thoughts on systems programming, language design, and software engineering.
+                Thoughts on systems programming, language design, and software
+                engineering.
             </p>
         </div>
 
         <div class="search-container">
-            <input 
-                type="text" 
-                class="search-input" 
+            <input
+                type="text"
+                class="search-input"
                 placeholder="Search posts by title, content, or tags..."
                 id="searchInput"
-            >
+            />
         </div>
 
         <div class="filter-container">
@@ -327,11 +330,11 @@
                     this.parser = new ColParser();
                     this.posts = [];
                     this.filteredPosts = [];
-                    this.container = document.getElementById('postsContainer');
-                    this.searchInput = document.getElementById('searchInput');
-                    this.sortSelect = document.getElementById('sortSelect');
-                    this.tagFilter = document.getElementById('tagFilter');
-                    
+                    this.container = document.getElementById("postsContainer");
+                    this.searchInput = document.getElementById("searchInput");
+                    this.sortSelect = document.getElementById("sortSelect");
+                    this.tagFilter = document.getElementById("tagFilter");
+
                     this.init();
                 }
 
@@ -342,94 +345,115 @@
                         this.populateTagFilter();
                         this.renderPosts();
                     } catch (error) {
-                        this.showError(`Failed to load blog posts: ${error.message}`);
+                        this.showError(
+                            `Failed to load blog posts: ${error.message}`,
+                        );
                     }
                 }
 
                 async loadPosts() {
                     try {
                         // Get list of .col files in the blog directory
-                        const response = await fetch('blog/index.json');
+                        const response = await fetch("blog/index.json");
                         let postFiles = [];
-                        
+
                         if (response.ok) {
                             const data = await response.json();
                             postFiles = data.posts || [];
                         } else {
                             // Fallback: try to load some common post files
                             postFiles = [
-                                'welcome.col',
-                                'rust-memory-safety.col',
-                                'building-parsers.col'
+                                "welcome.col",
+                                "rust-memory-safety.col",
+                                "building-parsers.col",
                             ];
                         }
 
                         // Load each post file
                         const loadPromises = postFiles.map(async (filename) => {
                             try {
-                                const parsed = await this.parser.loadFile(`blog/${filename}`);
-                                
+                                const parsed = await this.parser.loadFile(
+                                    `blog/${filename}`,
+                                );
+
                                 // Ensure metadata.tags is always an array
-                                if (!parsed.metadata.tags || !Array.isArray(parsed.metadata.tags)) {
+                                if (
+                                    !parsed.metadata.tags ||
+                                    !Array.isArray(parsed.metadata.tags)
+                                ) {
                                     parsed.metadata.tags = [];
                                 }
-                                
+
                                 return {
                                     filename,
-                                    slug: filename.replace('.col', ''),
-                                    ...parsed
+                                    slug: filename.replace(".col", ""),
+                                    ...parsed,
                                 };
                             } catch (error) {
-                                console.warn(`Failed to load ${filename}:`, error.message);
+                                console.warn(
+                                    `Failed to load ${filename}:`,
+                                    error.message,
+                                );
                                 return null;
                             }
                         });
 
                         const results = await Promise.all(loadPromises);
-                        this.posts = results.filter(post => post !== null);
+                        this.posts = results.filter((post) => post !== null);
                         this.filteredPosts = [...this.posts];
 
                         // Debug logging
-                        console.log('Loaded posts:', this.posts);
-                        this.posts.forEach(post => {
-                            console.log(`Post: ${post.metadata.title}, Tags:`, post.metadata.tags);
+                        console.log("Loaded posts:", this.posts);
+                        this.posts.forEach((post) => {
+                            console.log(
+                                `Post: ${post.metadata.title}, Tags:`,
+                                post.metadata.tags,
+                            );
                         });
 
                         // Sort by date (newest first) by default
-                        this.sortPosts('date-desc');
+                        this.sortPosts("date-desc");
                     } catch (error) {
-                        throw new Error(`Error loading posts: ${error.message}`);
+                        throw new Error(
+                            `Error loading posts: ${error.message}`,
+                        );
                     }
                 }
 
                 setupEventListeners() {
-                    this.searchInput.addEventListener('input', () => {
+                    this.searchInput.addEventListener("input", () => {
                         this.filterPosts();
                     });
 
-                    this.sortSelect.addEventListener('change', () => {
+                    this.sortSelect.addEventListener("change", () => {
                         this.sortPosts(this.sortSelect.value);
                         this.renderPosts();
                     });
 
-                    this.tagFilter.addEventListener('change', () => {
+                    this.tagFilter.addEventListener("change", () => {
                         this.filterPosts();
                     });
                 }
 
                 populateTagFilter() {
                     const allTags = new Set();
-                    this.posts.forEach(post => {
-                        if (post.metadata.tags && Array.isArray(post.metadata.tags)) {
-                            post.metadata.tags.forEach(tag => allTags.add(tag));
+                    this.posts.forEach((post) => {
+                        if (
+                            post.metadata.tags &&
+                            Array.isArray(post.metadata.tags)
+                        ) {
+                            post.metadata.tags.forEach((tag) =>
+                                allTags.add(tag),
+                            );
                         }
                     });
 
                     const sortedTags = Array.from(allTags).sort();
-                    this.tagFilter.innerHTML = '<option value="">All Tags</option>';
-                    
-                    sortedTags.forEach(tag => {
-                        const option = document.createElement('option');
+                    this.tagFilter.innerHTML =
+                        '<option value="">All Tags</option>';
+
+                    sortedTags.forEach((tag) => {
+                        const option = document.createElement("option");
                         option.value = tag;
                         option.textContent = tag;
                         this.tagFilter.appendChild(option);
@@ -440,14 +464,22 @@
                     const searchTerm = this.searchInput.value.toLowerCase();
                     const selectedTag = this.tagFilter.value;
 
-                    this.filteredPosts = this.posts.filter(post => {
-                        const matchesSearch = !searchTerm || 
-                            post.metadata.title.toLowerCase().includes(searchTerm) ||
+                    this.filteredPosts = this.posts.filter((post) => {
+                        const matchesSearch =
+                            !searchTerm ||
+                            post.metadata.title
+                                .toLowerCase()
+                                .includes(searchTerm) ||
                             post.preview.toLowerCase().includes(searchTerm) ||
-                            (post.metadata.tags && post.metadata.tags.some(tag => tag.toLowerCase().includes(searchTerm)));
+                            (post.metadata.tags &&
+                                post.metadata.tags.some((tag) =>
+                                    tag.toLowerCase().includes(searchTerm),
+                                ));
 
-                        const matchesTag = !selectedTag || 
-                            (post.metadata.tags && post.metadata.tags.includes(selectedTag));
+                        const matchesTag =
+                            !selectedTag ||
+                            (post.metadata.tags &&
+                                post.metadata.tags.includes(selectedTag));
 
                         return matchesSearch && matchesTag;
                     });
@@ -458,14 +490,24 @@
                 sortPosts(sortBy) {
                     this.filteredPosts.sort((a, b) => {
                         switch (sortBy) {
-                            case 'date-desc':
-                                return new Date(b.metadata.date) - new Date(a.metadata.date);
-                            case 'date-asc':
-                                return new Date(a.metadata.date) - new Date(b.metadata.date);
-                            case 'title-asc':
-                                return a.metadata.title.localeCompare(b.metadata.title);
-                            case 'title-desc':
-                                return b.metadata.title.localeCompare(a.metadata.title);
+                            case "date-desc":
+                                return (
+                                    new Date(b.metadata.date) -
+                                    new Date(a.metadata.date)
+                                );
+                            case "date-asc":
+                                return (
+                                    new Date(a.metadata.date) -
+                                    new Date(b.metadata.date)
+                                );
+                            case "title-asc":
+                                return a.metadata.title.localeCompare(
+                                    b.metadata.title,
+                                );
+                            case "title-desc":
+                                return b.metadata.title.localeCompare(
+                                    a.metadata.title,
+                                );
                             default:
                                 return 0;
                         }
@@ -476,9 +518,10 @@
                     if (this.filteredPosts.length === 0) {
                         this.container.innerHTML = `
                             <div class="no-posts">
-                                ${this.posts.length === 0 ? 
-                                    'No blog posts found. Create some .col files in the blog directory!' :
-                                    'No posts match your search criteria.'
+                                ${
+                                    this.posts.length === 0
+                                        ? "No blog posts found. Create some .col files in the blog directory!"
+                                        : "No posts match your search criteria."
                                 }
                             </div>
                         `;
@@ -487,23 +530,27 @@
 
                     this.container.innerHTML = `
                         <div class="posts-container">
-                            ${this.filteredPosts.map(post => this.renderPostCard(post)).join('')}
+                            ${this.filteredPosts.map((post) => this.renderPostCard(post)).join("")}
                         </div>
                     `;
 
                     // Add click handlers to post cards
-                    this.container.querySelectorAll('.post-card').forEach((card, index) => {
-                        card.addEventListener('click', () => {
-                            window.location.href = `post.html?slug=${this.filteredPosts[index].slug}`;
+                    this.container
+                        .querySelectorAll(".post-card")
+                        .forEach((card, index) => {
+                            card.addEventListener("click", () => {
+                                window.location.href = `post.html?slug=${this.filteredPosts[index].slug}`;
+                            });
                         });
-                    });
                 }
 
                 renderPostCard(post) {
-                    const formattedDate = new Date(post.metadata.date).toLocaleDateString('en-US', {
-                        year: 'numeric',
-                        month: 'long',
-                        day: 'numeric'
+                    const formattedDate = new Date(
+                        post.metadata.date,
+                    ).toLocaleDateString("en-US", {
+                        year: "numeric",
+                        month: "long",
+                        day: "numeric",
                     });
 
                     return `
@@ -515,21 +562,29 @@
                                 <span>${post.wordCount} words</span>
                                 <span>${post.estimatedReadTime} min read</span>
                             </div>
-                            ${post.preview ? `<div class="post-preview">${post.preview}</div>` : ''}
-                            ${post.metadata.tags && post.metadata.tags.length > 0 ? `
+                            ${post.preview ? `<div class="post-preview">${post.preview}</div>` : ""}
+                            ${
+                                post.metadata.tags &&
+                                post.metadata.tags.length > 0
+                                    ? `
                                 <div class="post-tags">
-                                    ${post.metadata.tags.map(tag => 
-                                        `<span class="post-tag">${this.escapeHtml(tag)}</span>`
-                                    ).join('')}
+                                    ${post.metadata.tags
+                                        .map(
+                                            (tag) =>
+                                                `<span class="post-tag">${this.escapeHtml(tag)}</span>`,
+                                        )
+                                        .join("")}
                                 </div>
-                            ` : ''}
+                            `
+                                    : ""
+                            }
                             <a href="post.html?slug=${post.slug}" class="read-more">Read more →</a>
                         </article>
                     `;
                 }
 
                 escapeHtml(text) {
-                    const div = document.createElement('div');
+                    const div = document.createElement("div");
                     div.textContent = text;
                     return div.innerHTML;
                 }
@@ -544,7 +599,7 @@
             }
 
             // Initialize blog listing when DOM is loaded
-            document.addEventListener('DOMContentLoaded', () => {
+            document.addEventListener("DOMContentLoaded", () => {
                 new BlogListing();
             });
         </script>
