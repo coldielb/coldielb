@@ -1,0 +1,543 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Creative Works - Jason Weiss Zeledon</title>
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+        <link
+            href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;600;700&display=swap"
+            rel="stylesheet"
+        />
+        <style>
+            * {
+                margin: 0;
+                padding: 0;
+                box-sizing: border-box;
+            }
+
+            body {
+                background-color: #000;
+                color: #fff;
+                font-family: "JetBrains Mono", monospace;
+                line-height: 1.6;
+                padding: 2rem;
+                max-width: 900px;
+                margin: 0 auto;
+            }
+
+            .header {
+                margin-bottom: 3rem;
+                border-bottom: 1px solid #333;
+                padding-bottom: 2rem;
+            }
+
+            .site-title {
+                font-size: 2.5rem;
+                font-weight: 700;
+                margin-bottom: 0.5rem;
+                background: linear-gradient(135deg, #00ffff, #8a2be2);
+                -webkit-background-clip: text;
+                -webkit-text-fill-color: transparent;
+                background-clip: text;
+            }
+
+            .site-subtitle {
+                font-size: 1.2rem;
+                font-weight: 400;
+                margin-bottom: 1rem;
+                color: #888;
+            }
+
+            .nav {
+                display: flex;
+                gap: 2rem;
+                font-size: 0.9rem;
+            }
+
+            .nav a {
+                color: #888;
+                text-decoration: none;
+                transition: color 0.2s ease;
+            }
+
+            .nav a:hover {
+                color: #8a2be2;
+            }
+
+            .nav a.active {
+                background: linear-gradient(135deg, #00ffff, #8a2be2);
+                -webkit-background-clip: text;
+                -webkit-text-fill-color: transparent;
+                background-clip: text;
+            }
+
+            .stories-header {
+                margin-bottom: 2rem;
+            }
+
+            .stories-title {
+                font-size: 2rem;
+                font-weight: 600;
+                margin-bottom: 1rem;
+                background: linear-gradient(135deg, #8a2be2, #00ffff);
+                -webkit-background-clip: text;
+                -webkit-text-fill-color: transparent;
+                background-clip: text;
+            }
+
+            .stories-description {
+                color: #888;
+                font-size: 1rem;
+                margin-bottom: 1rem;
+            }
+
+            .loading {
+                text-align: center;
+                color: #888;
+                font-style: italic;
+                padding: 2rem;
+            }
+
+            .error {
+                color: #ff6b6b;
+                text-align: center;
+                padding: 2rem;
+                border: 1px solid #ff6b6b;
+                border-radius: 0.5rem;
+                background-color: rgba(255, 107, 107, 0.1);
+            }
+
+            .stories-container {
+                display: grid;
+                gap: 2rem;
+            }
+
+            .story-card {
+                border: 1px solid #333;
+                border-radius: 0.5rem;
+                padding: 1.5rem;
+                background-color: #111;
+                transition: border-color 0.2s ease, background-color 0.2s ease;
+                cursor: pointer;
+            }
+
+            .story-card:hover {
+                border-color: #8a2be2;
+                background-color: #1a1a1a;
+            }
+
+            .story-title {
+                font-size: 1.3rem;
+                font-weight: 600;
+                margin-bottom: 0.5rem;
+                background: linear-gradient(135deg, #8a2be2, #00ffff);
+                -webkit-background-clip: text;
+                -webkit-text-fill-color: transparent;
+                background-clip: text;
+            }
+
+            .story-meta {
+                display: flex;
+                gap: 1rem;
+                font-size: 0.8rem;
+                color: #666;
+                margin-bottom: 1rem;
+                flex-wrap: wrap;
+            }
+
+            .story-preview {
+                color: #ccc;
+                font-size: 0.9rem;
+                line-height: 1.5;
+                margin-bottom: 1rem;
+            }
+
+            .story-tags {
+                display: flex;
+                gap: 0.5rem;
+                flex-wrap: wrap;
+            }
+
+            .story-tag {
+                background-color: #222;
+                color: #8a2be2;
+                padding: 0.2rem 0.5rem;
+                border-radius: 0.25rem;
+                font-size: 0.7rem;
+                border: 1px solid #333;
+            }
+
+            .read-more {
+                display: inline-block;
+                margin-top: 1rem;
+                color: #8a2be2;
+                font-size: 0.8rem;
+                text-decoration: none;
+                font-weight: 500;
+                transition: color 0.2s ease;
+            }
+
+            .read-more:hover {
+                color: #00ffff;
+            }
+
+            .no-stories {
+                text-align: center;
+                color: #888;
+                font-style: italic;
+                padding: 3rem;
+                border: 1px dashed #333;
+                border-radius: 0.5rem;
+            }
+
+            .search-container {
+                margin-bottom: 2rem;
+            }
+
+            .search-input {
+                width: 100%;
+                padding: 0.75rem;
+                background-color: #111;
+                border: 1px solid #333;
+                border-radius: 0.5rem;
+                color: #fff;
+                font-family: "JetBrains Mono", monospace;
+                font-size: 0.9rem;
+            }
+
+            .search-input:focus {
+                outline: none;
+                border-color: #8a2be2;
+            }
+
+            .search-input::placeholder {
+                color: #666;
+            }
+
+            .filter-container {
+                display: flex;
+                gap: 1rem;
+                margin-bottom: 2rem;
+                align-items: center;
+                flex-wrap: wrap;
+            }
+
+            .filter-label {
+                color: #888;
+                font-size: 0.9rem;
+            }
+
+            .filter-select {
+                background-color: #111;
+                border: 1px solid #333;
+                border-radius: 0.25rem;
+                color: #fff;
+                padding: 0.5rem;
+                font-family: "JetBrains Mono", monospace;
+                font-size: 0.8rem;
+            }
+
+            .filter-select:focus {
+                outline: none;
+                border-color: #8a2be2;
+            }
+
+            @media (max-width: 768px) {
+                body {
+                    padding: 1rem;
+                }
+
+                .site-title {
+                    font-size: 2rem;
+                }
+
+                .nav {
+                    flex-direction: column;
+                    gap: 0.5rem;
+                }
+
+                .stories-title {
+                    font-size: 1.5rem;
+                }
+
+                .story-meta {
+                    flex-direction: column;
+                    gap: 0.5rem;
+                }
+
+                .filter-container {
+                    flex-direction: column;
+                    align-items: flex-start;
+                    gap: 0.5rem;
+                }
+            }
+        </style>
+    </head>
+    <body>
+        <div class="header">
+            <h1 class="site-title">Jason Weiss Zeledon</h1>
+            <p class="site-subtitle">Full Stack Developer</p>
+            <nav class="nav">
+                <a href="index.html">Home</a>
+                <a href="blog.html">Blog</a>
+                <a href="stories.html" class="active">Creative Works</a>
+            </nav>
+        </div>
+
+        <div class="stories-header">
+            <h2 class="stories-title">Creative Works</h2>
+            <p class="stories-description">
+                Short stories, creative writing, and fictional narratives exploring technology, humanity, and the spaces in between.
+            </p>
+        </div>
+
+        <div class="search-container">
+            <input 
+                type="text" 
+                class="search-input" 
+                placeholder="Search stories by title, content, or tags..."
+                id="searchInput"
+            >
+        </div>
+
+        <div class="filter-container">
+            <span class="filter-label">Sort by:</span>
+            <select class="filter-select" id="sortSelect">
+                <option value="date-desc">Date (Newest First)</option>
+                <option value="date-asc">Date (Oldest First)</option>
+                <option value="title-asc">Title (A-Z)</option>
+                <option value="title-desc">Title (Z-A)</option>
+            </select>
+
+            <span class="filter-label">Filter by tag:</span>
+            <select class="filter-select" id="tagFilter">
+                <option value="">All Tags</option>
+            </select>
+        </div>
+
+        <div id="storiesContainer">
+            <div class="loading">Loading stories...</div>
+        </div>
+
+        <script src="js/col-parser.js"></script>
+        <script>
+            class StoryListing {
+                constructor() {
+                    this.parser = new ColParser();
+                    this.stories = [];
+                    this.filteredStories = [];
+                    this.container = document.getElementById('storiesContainer');
+                    this.searchInput = document.getElementById('searchInput');
+                    this.sortSelect = document.getElementById('sortSelect');
+                    this.tagFilter = document.getElementById('tagFilter');
+                    
+                    this.init();
+                }
+
+                async init() {
+                    try {
+                        await this.loadStories();
+                        this.setupEventListeners();
+                        this.populateTagFilter();
+                        this.renderStories();
+                    } catch (error) {
+                        this.showError(`Failed to load stories: ${error.message}`);
+                    }
+                }
+
+                async loadStories() {
+                    try {
+                        // Get list of .col files in the stories directory
+                        const response = await fetch('stories/index.json');
+                        let storyFiles = [];
+                        
+                        if (response.ok) {
+                            const data = await response.json();
+                            storyFiles = data.stories || [];
+                        } else {
+                            // Fallback: empty array if no stories
+                            storyFiles = [];
+                        }
+
+                        // Load each story file
+                        const loadPromises = storyFiles.map(async (filename) => {
+                            try {
+                                const parsed = await this.parser.loadFile(`stories/${filename}`);
+                                
+                                // Ensure metadata.tags is always an array
+                                if (!parsed.metadata.tags || !Array.isArray(parsed.metadata.tags)) {
+                                    parsed.metadata.tags = [];
+                                }
+                                
+                                return {
+                                    filename,
+                                    slug: filename.replace('.col', ''),
+                                    ...parsed
+                                };
+                            } catch (error) {
+                                console.warn(`Failed to load ${filename}:`, error.message);
+                                return null;
+                            }
+                        });
+
+                        const results = await Promise.all(loadPromises);
+                        this.stories = results.filter(story => story !== null);
+                        this.filteredStories = [...this.stories];
+
+                        // Sort by date (newest first) by default
+                        this.sortStories('date-desc');
+                    } catch (error) {
+                        throw new Error(`Error loading stories: ${error.message}`);
+                    }
+                }
+
+                setupEventListeners() {
+                    this.searchInput.addEventListener('input', () => {
+                        this.filterStories();
+                    });
+
+                    this.sortSelect.addEventListener('change', () => {
+                        this.sortStories(this.sortSelect.value);
+                        this.renderStories();
+                    });
+
+                    this.tagFilter.addEventListener('change', () => {
+                        this.filterStories();
+                    });
+                }
+
+                populateTagFilter() {
+                    const allTags = new Set();
+                    this.stories.forEach(story => {
+                        if (story.metadata.tags && Array.isArray(story.metadata.tags)) {
+                            story.metadata.tags.forEach(tag => allTags.add(tag));
+                        }
+                    });
+
+                    const sortedTags = Array.from(allTags).sort();
+                    this.tagFilter.innerHTML = '<option value="">All Tags</option>';
+                    
+                    sortedTags.forEach(tag => {
+                        const option = document.createElement('option');
+                        option.value = tag;
+                        option.textContent = tag;
+                        this.tagFilter.appendChild(option);
+                    });
+                }
+
+                filterStories() {
+                    const searchTerm = this.searchInput.value.toLowerCase();
+                    const selectedTag = this.tagFilter.value;
+
+                    this.filteredStories = this.stories.filter(story => {
+                        const matchesSearch = !searchTerm || 
+                            story.metadata.title.toLowerCase().includes(searchTerm) ||
+                            story.preview.toLowerCase().includes(searchTerm) ||
+                            (story.metadata.tags && story.metadata.tags.some(tag => tag.toLowerCase().includes(searchTerm)));
+
+                        const matchesTag = !selectedTag || 
+                            (story.metadata.tags && story.metadata.tags.includes(selectedTag));
+
+                        return matchesSearch && matchesTag;
+                    });
+
+                    this.renderStories();
+                }
+
+                sortStories(sortBy) {
+                    this.filteredStories.sort((a, b) => {
+                        switch (sortBy) {
+                            case 'date-desc':
+                                return new Date(b.metadata.date) - new Date(a.metadata.date);
+                            case 'date-asc':
+                                return new Date(a.metadata.date) - new Date(b.metadata.date);
+                            case 'title-asc':
+                                return a.metadata.title.localeCompare(b.metadata.title);
+                            case 'title-desc':
+                                return b.metadata.title.localeCompare(a.metadata.title);
+                            default:
+                                return 0;
+                        }
+                    });
+                }
+
+                renderStories() {
+                    if (this.filteredStories.length === 0) {
+                        this.container.innerHTML = `
+                            <div class="no-stories">
+                                ${this.stories.length === 0 ? 
+                                    'No stories found. Create some .col files in the stories directory!' :
+                                    'No stories match your search criteria.'
+                                }
+                            </div>
+                        `;
+                        return;
+                    }
+
+                    this.container.innerHTML = `
+                        <div class="stories-container">
+                            ${this.filteredStories.map(story => this.renderStoryCard(story)).join('')}
+                        </div>
+                    `;
+
+                    // Add click handlers to story cards
+                    this.container.querySelectorAll('.story-card').forEach((card, index) => {
+                        card.addEventListener('click', () => {
+                            window.location.href = `story.html?slug=${this.filteredStories[index].slug}`;
+                        });
+                    });
+                }
+
+                renderStoryCard(story) {
+                    const formattedDate = new Date(story.metadata.date).toLocaleDateString('en-US', {
+                        year: 'numeric',
+                        month: 'long',
+                        day: 'numeric'
+                    });
+
+                    return `
+                        <article class="story-card">
+                            <h3 class="story-title">${this.escapeHtml(story.metadata.title)}</h3>
+                            <div class="story-meta">
+                                <span>By ${this.escapeHtml(story.metadata.author)}</span>
+                                <span>${formattedDate}</span>
+                                <span>${story.wordCount} words</span>
+                                <span>${story.estimatedReadTime} min read</span>
+                            </div>
+                            ${story.preview ? `<div class="story-preview">${story.preview}</div>` : ''}
+                            ${story.metadata.tags && story.metadata.tags.length > 0 ? `
+                                <div class="story-tags">
+                                    ${story.metadata.tags.map(tag => 
+                                        `<span class="story-tag">${this.escapeHtml(tag)}</span>`
+                                    ).join('')}
+                                </div>
+                            ` : ''}
+                            <a href="story.html?slug=${story.slug}" class="read-more">Read story →</a>
+                        </article>
+                    `;
+                }
+
+                escapeHtml(text) {
+                    const div = document.createElement('div');
+                    div.textContent = text;
+                    return div.innerHTML;
+                }
+
+                showError(message) {
+                    this.container.innerHTML = `
+                        <div class="error">
+                            <strong>Error:</strong> ${this.escapeHtml(message)}
+                        </div>
+                    `;
+                }
+            }
+
+            // Initialize story listing when DOM is loaded
+            document.addEventListener('DOMContentLoaded', () => {
+                new StoryListing();
+            });
+        </script>
+    </body>
+</html>
