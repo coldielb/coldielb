@@ -349,7 +349,7 @@
                 }
 
                 renderStory(story) {
-                    const formattedDate = new Date(story.metadata.date).toLocaleDateString('en-US', {
+                    const formattedDate = new Date(story.metadata.date + 'T12:00:00').toLocaleDateString('en-US', {
                         year: 'numeric',
                         month: 'long',
                         day: 'numeric'

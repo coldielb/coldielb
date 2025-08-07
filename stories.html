@@ -484,13 +484,13 @@
                         switch (sortBy) {
                             case "date-desc":
                                 return (
-                                    new Date(b.metadata.date) -
-                                    new Date(a.metadata.date)
+                                    new Date(b.metadata.date + 'T12:00:00') -
+                                    new Date(a.metadata.date + 'T12:00:00')
                                 );
                             case "date-asc":
                                 return (
-                                    new Date(a.metadata.date) -
-                                    new Date(b.metadata.date)
+                                    new Date(a.metadata.date + 'T12:00:00') -
+                                    new Date(b.metadata.date + 'T12:00:00')
                                 );
                             case "title-asc":
                                 return a.metadata.title.localeCompare(
