@@ -1,440 +1,498 @@
 /**
  * COL File Parser - Production-ready parser for .col blog format
  * Supports markdown syntax, inline HTML, and custom <preview> tags
- * 
+ *
  * Security considerations:
  * - HTML sanitization to prevent XSS
  * - Input validation and boundary checks
  * - Memory-efficient processing for large files
  */
 class ColParser {
-    constructor() {
-        // HTML entities for security
-        this.htmlEntities = {
-            '&': '&amp;',
-            '<': '&lt;',
-            '>': '&gt;',
-            '"': '&quot;',
-            "'": '&#39;'
-        };
+  constructor() {
+    // HTML entities for security
+    this.htmlEntities = {
+      "&": "&amp;",
+      "<": "&lt;",
+      ">": "&gt;",
+      '"': "&quot;",
+      "'": "&#39;",
+    };
 
-        // Allowed HTML tags for passthrough (whitelist approach)
-        this.allowedTags = new Set([
-            'p', 'div', 'span', 'a', 'img', 'br', 'hr', 'em', 'strong', 'i', 'b',
-            'ul', 'ol', 'li', 'blockquote', 'code', 'pre', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6',
-            'table', 'thead', 'tbody', 'tr', 'th', 'td', 'preview'
-        ]);
+    // Allowed HTML tags for passthrough (whitelist approach)
+    this.allowedTags = new Set([
+      "p",
+      "div",
+      "span",
+      "a",
+      "img",
+      "br",
+      "hr",
+      "em",
+      "strong",
+      "i",
+      "b",
+      "ul",
+      "ol",
+      "li",
+      "blockquote",
+      "code",
+      "pre",
+      "h1",
+      "h2",
+      "h3",
+      "h4",
+      "h5",
+      "h6",
+      "table",
+      "thead",
+      "tbody",
+      "tr",
+      "th",
+      "td",
+      "preview",
+    ]);
 
-        // Regex patterns for markdown parsing
-        this.patterns = {
-            metadata: /^---\s*\n([\s\S]*?)\n---\s*\n/,
-            preview: /<preview>([\s\S]*?)<\/preview>/g,
-            heading: /^(#{1,6})\s+(.+)$/gm,
-            bold: /\*\*(.*?)\*\*/g,
-            italic: /\*(.*?)\*/g,
-            code: /`([^`]+)`/g,
-            codeBlock: /```(\w*)\n([\s\S]*?)```/g,
-            footnote: /\[\^(\w+)\]/g,
-            link: /\[([^\]]+)\]\(([^)]+)\)/g,
-            image: /!\[([^\]]*)\]\(([^)]+)\)/g,
-            unorderedList: /^[\s]*[-*+]\s+(.+)$/gm,
-            orderedList: /^[\s]*\d+\.\s+(.+)$/gm,
-            blockquote: /^>\s+(.+)$/gm,
-            horizontalRule: /^---$/gm,
-            lineBreak: /\n\n+/g,
-            paragraph: /^(?!<[^>]+>|#{1,6}\s|[-*+]\s|\d+\.\s|>\s|```)(.+)$/gm
-        };
+    // Regex patterns for markdown parsing
+    this.patterns = {
+      metadata: /^---\s*\n([\s\S]*?)\n---\s*\n/,
+      preview: /<preview>([\s\S]*?)<\/preview>/g,
+      heading: /^(#{1,6})\s+(.+)$/gm,
+      bold: /\*\*(.*?)\*\*/g,
+      italic: /\*(.*?)\*/g,
+      code: /`([^`]+)`/g,
+      codeBlock: /```(\w*)\n([\s\S]*?)```/g,
+      footnote: /\[\^(\w+)\]/g,
+      link: /\[([^\]]+)\]\(([^)]+)\)/g,
+      image: /!\[([^\]]*)\]\(([^)]+)\)/g,
+      unorderedList: /^[\s]*[-*+]\s+(.+)$/gm,
+      orderedList: /^[\s]*\d+\.\s+(.+)$/gm,
+      blockquote: /^>\s+(.+)$/gm,
+      horizontalRule: /^---$/gm,
+      lineBreak: /\n\n+/g,
+      paragraph: /^(?!<[^>]+>|#{1,6}\s|[-*+]\s|\d+\.\s|>\s|```)(.+)$/gm,
+    };
+  }
+
+  /**
+   * Escapes HTML entities to prevent XSS attacks
+   * @param {string} text - Text to escape
+   * @returns {string} - Escaped text
+   */
+  escapeHtml(text) {
+    if (!text || typeof text !== "string") return "";
+    return text.replace(
+      /[&<>"']/g,
+      (match) => this.htmlEntities[match] || match,
+    );
+  }
+
+  /**
+   * Sanitizes HTML tags, allowing only whitelisted tags
+   * @param {string} html - HTML to sanitize
+   * @returns {string} - Sanitized HTML
+   */
+  sanitizeHtml(html) {
+    if (!html || typeof html !== "string") return "";
+
+    // Remove script tags and their content completely
+    html = html.replace(
+      /<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi,
+      "",
+    );
+
+    // Remove dangerous attributes
+    html = html.replace(/\son\w+\s*=\s*["'][^"']*["']/gi, "");
+    html = html.replace(/javascript:/gi, "");
+
+    return html;
+  }
+
+  /**
+   * Parses YAML-like metadata from the top of .col files
+   * @param {string} content - File content
+   * @returns {Object} - Parsed metadata and remaining content
+   */
+  parseMetadata(content) {
+    const match = content.match(this.patterns.metadata);
+    if (!match) {
+      return { metadata: {}, content: content.trim() };
     }
 
-    /**
-     * Escapes HTML entities to prevent XSS attacks
-     * @param {string} text - Text to escape
-     * @returns {string} - Escaped text
-     */
-    escapeHtml(text) {
-        if (!text || typeof text !== 'string') return '';
-        return text.replace(/[&<>"']/g, match => this.htmlEntities[match] || match);
+    const metadataStr = match[1];
+    const remainingContent = content.slice(match[0].length).trim();
+    const metadata = {};
+
+    // Parse simple key: value pairs
+    const lines = metadataStr.split("\n");
+    for (const line of lines) {
+      const trimmed = line.trim();
+      if (!trimmed) continue;
+
+      const colonIndex = trimmed.indexOf(":");
+      if (colonIndex === -1) continue;
+
+      const key = trimmed.slice(0, colonIndex).trim();
+      const value = trimmed.slice(colonIndex + 1).trim();
+
+      if (key && value) {
+        metadata[key] = value.replace(/^["']|["']$/g, ""); // Remove quotes
+      }
     }
 
-    /**
-     * Sanitizes HTML tags, allowing only whitelisted tags
-     * @param {string} html - HTML to sanitize
-     * @returns {string} - Sanitized HTML
-     */
-    sanitizeHtml(html) {
-        if (!html || typeof html !== 'string') return '';
-        
-        // Remove script tags and their content completely
-        html = html.replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, '');
-        
-        // Remove dangerous attributes
-        html = html.replace(/\son\w+\s*=\s*["'][^"']*["']/gi, '');
-        html = html.replace(/javascript:/gi, '');
-        
-        return html;
+    return { metadata, content: remainingContent };
+  }
+
+  /**
+   * Extracts preview content from <preview> tags
+   * @param {string} content - Content to extract from
+   * @returns {Object} - Preview text and content without preview tags
+   */
+  extractPreview(content) {
+    let preview = "";
+    const matches = [...content.matchAll(this.patterns.preview)];
+
+    if (matches.length > 0) {
+      preview = matches[0][1].trim();
     }
 
-    /**
-     * Parses YAML-like metadata from the top of .col files
-     * @param {string} content - File content
-     * @returns {Object} - Parsed metadata and remaining content
-     */
-    parseMetadata(content) {
-        const match = content.match(this.patterns.metadata);
-        if (!match) {
-            return { metadata: {}, content: content.trim() };
+    // Remove preview tags from content
+    const cleanContent = content.replace(this.patterns.preview, "");
+
+    return { preview, content: cleanContent };
+  }
+
+  /**
+   * Converts markdown headings to HTML with gradient styling
+   * @param {string} content - Content to process
+   * @returns {string} - Content with HTML headings
+   */
+  parseHeadings(content) {
+    return content.replace(this.patterns.heading, (match, hashes, text) => {
+      const level = hashes.length;
+      const id = text
+        .toLowerCase()
+        .replace(/[^a-z0-9]+/g, "-")
+        .replace(/^-|-$/g, "");
+      return `<h${level} id="${id}" class="blog-heading">${text.trim()}</h${level}>`;
+    });
+  }
+
+  /**
+   * Converts markdown formatting to HTML
+   * @param {string} content - Content to process
+   * @returns {string} - Content with HTML formatting
+   */
+  parseFormatting(content) {
+    // Bold text
+    content = content.replace(
+      this.patterns.bold,
+      '<strong class="blog-bold">$1</strong>',
+    );
+
+    // Italic text (but not if it's inside bold)
+    content = content.replace(
+      this.patterns.italic,
+      (match, text, offset, string) => {
+        // Check if this italic is inside bold tags
+        const before = string.slice(0, offset);
+        const after = string.slice(offset + match.length);
+        const openBold = (before.match(/<strong[^>]*>/g) || []).length;
+        const closeBold = (before.match(/<\/strong>/g) || []).length;
+
+        if (openBold > closeBold) {
+          return `<em class="blog-italic">${text}</em>`;
         }
+        return `<em class="blog-italic">${text}</em>`;
+      },
+    );
 
-        const metadataStr = match[1];
-        const remainingContent = content.slice(match[0].length).trim();
-        const metadata = {};
+    return content;
+  }
 
-        // Parse simple key: value pairs
-        const lines = metadataStr.split('\n');
-        for (const line of lines) {
-            const trimmed = line.trim();
-            if (!trimmed) continue;
-            
-            const colonIndex = trimmed.indexOf(':');
-            if (colonIndex === -1) continue;
-            
-            const key = trimmed.slice(0, colonIndex).trim();
-            const value = trimmed.slice(colonIndex + 1).trim();
-            
-            if (key && value) {
-                metadata[key] = value.replace(/^["']|["']$/g, ''); // Remove quotes
-            }
+  /**
+   * Converts markdown code blocks and inline code to HTML
+   * @param {string} content - Content to process
+   * @returns {string} - Content with HTML code elements
+   */
+  parseCode(content) {
+    // Code blocks with language support
+    content = content.replace(
+      this.patterns.codeBlock,
+      (match, language, code) => {
+        const escapedCode = this.escapeHtml(code.trim());
+        const langClass = language ? ` language-${language}` : "";
+        return `<pre class="blog-code-block"><code class="blog-code${langClass}">${escapedCode}</code></pre>`;
+      },
+    );
+
+    // Inline code
+    content = content.replace(this.patterns.code, (match, code) => {
+      const escapedCode = this.escapeHtml(code);
+      return `<code class="blog-inline-code">${escapedCode}</code>`;
+    });
+
+    return content;
+  }
+
+  /**
+   * Converts markdown links and images to HTML
+   * @param {string} content - Content to process
+   * @returns {string} - Content with HTML links and images
+   */
+  parseLinksAndImages(content) {
+    // Images (must come before links since images use similar syntax)
+    content = content.replace(this.patterns.image, (match, alt, src) => {
+      const escapedAlt = this.escapeHtml(alt);
+      const escapedSrc = this.escapeHtml(src);
+      return `<img src="${escapedSrc}" alt="${escapedAlt}" class="blog-image" loading="lazy">`;
+    });
+
+    // Links
+    content = content.replace(this.patterns.link, (match, text, url) => {
+      const escapedText = this.escapeHtml(text);
+      const escapedUrl = this.escapeHtml(url);
+      const target = url.startsWith("http")
+        ? ' target="_blank" rel="noopener noreferrer"'
+        : "";
+      return `<a href="${escapedUrl}" class="blog-link"${target}>${escapedText}</a>`;
+    });
+
+    return content;
+  }
+
+  /**
+   * Converts footnote references to superscript HTML
+   * @param {string} content - Content to process
+   * @returns {string} - Content with footnote superscripts
+   */
+  parseFootnotes(content) {
+    return content.replace(this.patterns.footnote, (match, ref) => {
+      return `<sup class="blog-footnote">${ref}</sup>`;
+    });
+  }
+
+  /**
+   * Converts markdown lists to HTML
+   * @param {string} content - Content to process
+   * @returns {string} - Content with HTML lists
+   */
+  parseLists(content) {
+    const lines = content.split("\n");
+    const result = [];
+    let inUnorderedList = false;
+    let inOrderedList = false;
+
+    for (let i = 0; i < lines.length; i++) {
+      const line = lines[i];
+      const unorderedMatch = line.match(/^[\s]*[-*+]\s+(.+)$/);
+      const orderedMatch = line.match(/^[\s]*\d+\.\s+(.+)$/);
+
+      if (unorderedMatch) {
+        if (!inUnorderedList) {
+          if (inOrderedList) {
+            result.push("</ol>");
+            inOrderedList = false;
+          }
+          result.push('<ul class="blog-list">');
+          inUnorderedList = true;
         }
-
-        return { metadata, content: remainingContent };
-    }
-
-    /**
-     * Extracts preview content from <preview> tags
-     * @param {string} content - Content to extract from
-     * @returns {Object} - Preview text and content without preview tags
-     */
-    extractPreview(content) {
-        let preview = '';
-        const matches = [...content.matchAll(this.patterns.preview)];
-        
-        if (matches.length > 0) {
-            preview = matches[0][1].trim();
+        result.push(`<li class="blog-list-item">${unorderedMatch[1]}</li>`);
+      } else if (orderedMatch) {
+        if (!inOrderedList) {
+          if (inUnorderedList) {
+            result.push("</ul>");
+            inUnorderedList = false;
+          }
+          result.push('<ol class="blog-list blog-ordered-list">');
+          inOrderedList = true;
         }
-
-        // Remove preview tags from content
-        const cleanContent = content.replace(this.patterns.preview, '');
-        
-        return { preview, content: cleanContent };
-    }
-
-    /**
-     * Converts markdown headings to HTML with gradient styling
-     * @param {string} content - Content to process
-     * @returns {string} - Content with HTML headings
-     */
-    parseHeadings(content) {
-        return content.replace(this.patterns.heading, (match, hashes, text) => {
-            const level = hashes.length;
-            const id = text.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
-            return `<h${level} id="${id}" class="blog-heading">${text.trim()}</h${level}>`;
-        });
-    }
-
-    /**
-     * Converts markdown formatting to HTML
-     * @param {string} content - Content to process
-     * @returns {string} - Content with HTML formatting
-     */
-    parseFormatting(content) {
-        // Bold text
-        content = content.replace(this.patterns.bold, '<strong class="blog-bold">$1</strong>');
-        
-        // Italic text (but not if it's inside bold)
-        content = content.replace(this.patterns.italic, (match, text, offset, string) => {
-            // Check if this italic is inside bold tags
-            const before = string.slice(0, offset);
-            const after = string.slice(offset + match.length);
-            const openBold = (before.match(/<strong[^>]*>/g) || []).length;
-            const closeBold = (before.match(/<\/strong>/g) || []).length;
-            
-            if (openBold > closeBold) {
-                return `<em class="blog-italic">${text}</em>`;
-            }
-            return `<em class="blog-italic">${text}</em>`;
-        });
-
-        return content;
-    }
-
-    /**
-     * Converts markdown code blocks and inline code to HTML
-     * @param {string} content - Content to process
-     * @returns {string} - Content with HTML code elements
-     */
-    parseCode(content) {
-        // Code blocks with language support
-        content = content.replace(this.patterns.codeBlock, (match, language, code) => {
-            const escapedCode = this.escapeHtml(code.trim());
-            const langClass = language ? ` language-${language}` : '';
-            return `<pre class="blog-code-block"><code class="blog-code${langClass}">${escapedCode}</code></pre>`;
-        });
-
-        // Inline code
-        content = content.replace(this.patterns.code, (match, code) => {
-            const escapedCode = this.escapeHtml(code);
-            return `<code class="blog-inline-code">${escapedCode}</code>`;
-        });
-
-        return content;
-    }
-
-    /**
-     * Converts markdown links and images to HTML
-     * @param {string} content - Content to process
-     * @returns {string} - Content with HTML links and images
-     */
-    parseLinksAndImages(content) {
-        // Images (must come before links since images use similar syntax)
-        content = content.replace(this.patterns.image, (match, alt, src) => {
-            const escapedAlt = this.escapeHtml(alt);
-            const escapedSrc = this.escapeHtml(src);
-            return `<img src="${escapedSrc}" alt="${escapedAlt}" class="blog-image" loading="lazy">`;
-        });
-
-        // Links
-        content = content.replace(this.patterns.link, (match, text, url) => {
-            const escapedText = this.escapeHtml(text);
-            const escapedUrl = this.escapeHtml(url);
-            const target = url.startsWith('http') ? ' target="_blank" rel="noopener noreferrer"' : '';
-            return `<a href="${escapedUrl}" class="blog-link"${target}>${escapedText}</a>`;
-        });
-
-        return content;
-    }
-
-    /**
-     * Converts footnote references to superscript HTML
-     * @param {string} content - Content to process
-     * @returns {string} - Content with footnote superscripts
-     */
-    parseFootnotes(content) {
-        return content.replace(this.patterns.footnote, (match, ref) => {
-            return `<sup class="blog-footnote"><a href="#footnote-${ref}">${ref}</a></sup>`;
-        });
-    }
-
-    /**
-     * Converts markdown lists to HTML
-     * @param {string} content - Content to process
-     * @returns {string} - Content with HTML lists
-     */
-    parseLists(content) {
-        const lines = content.split('\n');
-        const result = [];
-        let inUnorderedList = false;
-        let inOrderedList = false;
-
-        for (let i = 0; i < lines.length; i++) {
-            const line = lines[i];
-            const unorderedMatch = line.match(/^[\s]*[-*+]\s+(.+)$/);
-            const orderedMatch = line.match(/^[\s]*\d+\.\s+(.+)$/);
-
-            if (unorderedMatch) {
-                if (!inUnorderedList) {
-                    if (inOrderedList) {
-                        result.push('</ol>');
-                        inOrderedList = false;
-                    }
-                    result.push('<ul class="blog-list">');
-                    inUnorderedList = true;
-                }
-                result.push(`<li class="blog-list-item">${unorderedMatch[1]}</li>`);
-            } else if (orderedMatch) {
-                if (!inOrderedList) {
-                    if (inUnorderedList) {
-                        result.push('</ul>');
-                        inUnorderedList = false;
-                    }
-                    result.push('<ol class="blog-list blog-ordered-list">');
-                    inOrderedList = true;
-                }
-                result.push(`<li class="blog-list-item">${orderedMatch[1]}</li>`);
-            } else {
-                if (inUnorderedList) {
-                    result.push('</ul>');
-                    inUnorderedList = false;
-                }
-                if (inOrderedList) {
-                    result.push('</ol>');
-                    inOrderedList = false;
-                }
-                result.push(line);
-            }
+        result.push(`<li class="blog-list-item">${orderedMatch[1]}</li>`);
+      } else {
+        if (inUnorderedList) {
+          result.push("</ul>");
+          inUnorderedList = false;
         }
-
-        // Close any open lists
-        if (inUnorderedList) result.push('</ul>');
-        if (inOrderedList) result.push('</ol>');
-
-        return result.join('\n');
-    }
-
-    /**
-     * Converts markdown blockquotes and horizontal rules to HTML
-     * @param {string} content - Content to process
-     * @returns {string} - Content with HTML blockquotes and rules
-     */
-    parseBlockElements(content) {
-        // Blockquotes
-        content = content.replace(this.patterns.blockquote, '<blockquote class="blog-blockquote">$1</blockquote>');
-        
-        // Horizontal rules
-        content = content.replace(this.patterns.horizontalRule, '<hr class="blog-hr">');
-
-        return content;
-    }
-
-    /**
-     * Wraps text in paragraphs where appropriate
-     * @param {string} content - Content to process
-     * @returns {string} - Content with paragraph tags
-     */
-    parseParagraphs(content) {
-        // Split by double newlines to identify paragraph breaks
-        const sections = content.split(/\n\s*\n/);
-        const result = [];
-
-        for (const section of sections) {
-            const trimmed = section.trim();
-            if (!trimmed) continue;
-
-            // Check if section starts with HTML tag or markdown syntax
-            if (trimmed.match(/^<[^>]+>/) || 
-                trimmed.match(/^#{1,6}\s/) || 
-                trimmed.match(/^[-*+]\s/) || 
-                trimmed.match(/^\d+\.\s/) || 
-                trimmed.match(/^>\s/) || 
-                trimmed.match(/^```/)) {
-                result.push(trimmed);
-            } else {
-                // Wrap in paragraph tags
-                result.push(`<p class="blog-paragraph">${trimmed}</p>`);
-            }
+        if (inOrderedList) {
+          result.push("</ol>");
+          inOrderedList = false;
         }
-
-        return result.join('\n\n');
+        result.push(line);
+      }
     }
 
-    /**
-     * Main parsing method that processes .col content to HTML
-     * @param {string} rawContent - Raw .col file content
-     * @returns {Object} - Parsed result with metadata, preview, and HTML content
-     */
-    parse(rawContent) {
-        if (!rawContent || typeof rawContent !== 'string') {
-            throw new Error('Invalid input: content must be a non-empty string');
-        }
+    // Close any open lists
+    if (inUnorderedList) result.push("</ul>");
+    if (inOrderedList) result.push("</ol>");
 
-        try {
-            // Step 1: Parse metadata
-            const { metadata, content: contentWithoutMeta } = this.parseMetadata(rawContent);
+    return result.join("\n");
+  }
 
-            // Step 2: Extract preview
-            const { preview, content: contentWithoutPreview } = this.extractPreview(contentWithoutMeta);
+  /**
+   * Converts markdown blockquotes and horizontal rules to HTML
+   * @param {string} content - Content to process
+   * @returns {string} - Content with HTML blockquotes and rules
+   */
+  parseBlockElements(content) {
+    // Blockquotes
+    content = content.replace(
+      this.patterns.blockquote,
+      '<blockquote class="blog-blockquote">$1</blockquote>',
+    );
 
-            // Step 3: Sanitize HTML (preserve allowed tags)
-            let processedContent = this.sanitizeHtml(contentWithoutPreview);
+    // Horizontal rules
+    content = content.replace(
+      this.patterns.horizontalRule,
+      '<hr class="blog-hr">',
+    );
 
-            // Step 4: Parse markdown elements in order
-            processedContent = this.parseCode(processedContent);       // Code first to avoid conflicts
-            processedContent = this.parseHeadings(processedContent);
-            processedContent = this.parseLinksAndImages(processedContent);
-            processedContent = this.parseFormatting(processedContent);
-            processedContent = this.parseFootnotes(processedContent); // Add footnotes before lists
-            processedContent = this.parseLists(processedContent);
-            processedContent = this.parseBlockElements(processedContent);
-            processedContent = this.parseParagraphs(processedContent);
+    return content;
+  }
 
-            // Step 5: Parse preview content if it exists
-            let processedPreview = '';
-            if (preview) {
-                processedPreview = this.sanitizeHtml(preview);
-                processedPreview = this.parseFormatting(processedPreview);
-                processedPreview = this.parseLinksAndImages(processedPreview);
-                // Remove paragraph wrapping for preview
-                processedPreview = processedPreview.trim();
-            }
+  /**
+   * Wraps text in paragraphs where appropriate
+   * @param {string} content - Content to process
+   * @returns {string} - Content with paragraph tags
+   */
+  parseParagraphs(content) {
+    // Split by double newlines to identify paragraph breaks
+    const sections = content.split(/\n\s*\n/);
+    const result = [];
 
-            const processedTags = metadata.tags ? metadata.tags.split(',').map(tag => tag.trim()) : [];
-            
-            return {
-                metadata: {
-                    title: metadata.title || 'Untitled',
-                    date: metadata.date || new Date().toISOString().split('T')[0],
-                    author: metadata.author || 'Anonymous',
-                    tags: processedTags,
-                    ...metadata,
-                    // Override the tags with processed version to prevent string overwrite
-                    tags: processedTags
-                },
-                preview: processedPreview,
-                content: processedContent.trim(),
-                wordCount: this.countWords(processedContent),
-                estimatedReadTime: this.estimateReadTime(processedContent)
-            };
+    for (const section of sections) {
+      const trimmed = section.trim();
+      if (!trimmed) continue;
 
-        } catch (error) {
-            throw new Error(`Failed to parse .col content: ${error.message}`);
-        }
+      // Check if section starts with HTML tag or markdown syntax
+      if (
+        trimmed.match(/^<[^>]+>/) ||
+        trimmed.match(/^#{1,6}\s/) ||
+        trimmed.match(/^[-*+]\s/) ||
+        trimmed.match(/^\d+\.\s/) ||
+        trimmed.match(/^>\s/) ||
+        trimmed.match(/^```/)
+      ) {
+        result.push(trimmed);
+      } else {
+        // Wrap in paragraph tags
+        result.push(`<p class="blog-paragraph">${trimmed}</p>`);
+      }
     }
 
-    /**
-     * Counts words in processed content (excluding HTML tags)
-     * @param {string} content - HTML content
-     * @returns {number} - Word count
-     */
-    countWords(content) {
-        const textOnly = content.replace(/<[^>]*>/g, '').trim();
-        return textOnly ? textOnly.split(/\s+/).length : 0;
+    return result.join("\n\n");
+  }
+
+  /**
+   * Main parsing method that processes .col content to HTML
+   * @param {string} rawContent - Raw .col file content
+   * @returns {Object} - Parsed result with metadata, preview, and HTML content
+   */
+  parse(rawContent) {
+    if (!rawContent || typeof rawContent !== "string") {
+      throw new Error("Invalid input: content must be a non-empty string");
     }
 
-    /**
-     * Estimates reading time based on average reading speed
-     * @param {string} content - HTML content
-     * @returns {number} - Estimated read time in minutes
-     */
-    estimateReadTime(content) {
-        const wordCount = this.countWords(content);
-        const wordsPerMinute = 200; // Average reading speed
-        return Math.max(1, Math.ceil(wordCount / wordsPerMinute));
-    }
+    try {
+      // Step 1: Parse metadata
+      const { metadata, content: contentWithoutMeta } =
+        this.parseMetadata(rawContent);
 
-    /**
-     * Loads and parses a .col file from URL
-     * @param {string} url - URL to .col file
-     * @returns {Promise<Object>} - Parsed content
-     */
-    async loadFile(url) {
-        try {
-            const response = await fetch(url);
-            if (!response.ok) {
-                throw new Error(`HTTP ${response.status}: ${response.statusText}`);
-            }
-            
-            const content = await response.text();
-            return this.parse(content);
-        } catch (error) {
-            throw new Error(`Failed to load .col file from ${url}: ${error.message}`);
-        }
-    }
+      // Step 2: Extract preview
+      const { preview, content: contentWithoutPreview } =
+        this.extractPreview(contentWithoutMeta);
 
-    /**
-     * Generates CSS styles for blog content
-     * @returns {string} - CSS stylesheet for blog content
-     */
-    generateStyles() {
-        return `
+      // Step 3: Sanitize HTML (preserve allowed tags)
+      let processedContent = this.sanitizeHtml(contentWithoutPreview);
+
+      // Step 4: Parse markdown elements in order
+      processedContent = this.parseCode(processedContent); // Code first to avoid conflicts
+      processedContent = this.parseHeadings(processedContent);
+      processedContent = this.parseLinksAndImages(processedContent);
+      processedContent = this.parseFormatting(processedContent);
+      processedContent = this.parseFootnotes(processedContent); // Add footnotes before lists
+      processedContent = this.parseLists(processedContent);
+      processedContent = this.parseBlockElements(processedContent);
+      processedContent = this.parseParagraphs(processedContent);
+
+      // Step 5: Parse preview content if it exists
+      let processedPreview = "";
+      if (preview) {
+        processedPreview = this.sanitizeHtml(preview);
+        processedPreview = this.parseFormatting(processedPreview);
+        processedPreview = this.parseLinksAndImages(processedPreview);
+        // Remove paragraph wrapping for preview
+        processedPreview = processedPreview.trim();
+      }
+
+      const processedTags = metadata.tags
+        ? metadata.tags.split(",").map((tag) => tag.trim())
+        : [];
+
+      return {
+        metadata: {
+          title: metadata.title || "Untitled",
+          date: metadata.date || new Date().toISOString().split("T")[0],
+          author: metadata.author || "Anonymous",
+          tags: processedTags,
+          ...metadata,
+          // Override the tags with processed version to prevent string overwrite
+          tags: processedTags,
+        },
+        preview: processedPreview,
+        content: processedContent.trim(),
+        wordCount: this.countWords(processedContent),
+        estimatedReadTime: this.estimateReadTime(processedContent),
+      };
+    } catch (error) {
+      throw new Error(`Failed to parse .col content: ${error.message}`);
+    }
+  }
+
+  /**
+   * Counts words in processed content (excluding HTML tags)
+   * @param {string} content - HTML content
+   * @returns {number} - Word count
+   */
+  countWords(content) {
+    const textOnly = content.replace(/<[^>]*>/g, "").trim();
+    return textOnly ? textOnly.split(/\s+/).length : 0;
+  }
+
+  /**
+   * Estimates reading time based on average reading speed
+   * @param {string} content - HTML content
+   * @returns {number} - Estimated read time in minutes
+   */
+  estimateReadTime(content) {
+    const wordCount = this.countWords(content);
+    const wordsPerMinute = 200; // Average reading speed
+    return Math.max(1, Math.ceil(wordCount / wordsPerMinute));
+  }
+
+  /**
+   * Loads and parses a .col file from URL
+   * @param {string} url - URL to .col file
+   * @returns {Promise<Object>} - Parsed content
+   */
+  async loadFile(url) {
+    try {
+      const response = await fetch(url);
+      if (!response.ok) {
+        throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+      }
+
+      const content = await response.text();
+      return this.parse(content);
+    } catch (error) {
+      throw new Error(`Failed to load .col file from ${url}: ${error.message}`);
+    }
+  }
+
+  /**
+   * Generates CSS styles for blog content
+   * @returns {string} - CSS stylesheet for blog content
+   */
+  generateStyles() {
+    return `
         .blog-content {
             max-width: 800px;
             margin: 0 auto;
@@ -591,43 +649,34 @@ class ColParser {
         .blog-footnote {
             font-size: 0.7em;
             line-height: 1;
-        }
-
-        .blog-footnote a {
-            color: #00ffff;
-            text-decoration: none;
-            transition: color 0.2s ease;
-        }
-
-        .blog-footnote a:hover {
-            color: #8a2be2;
+            color: #888;
         }
 
         @media (max-width: 768px) {
             .blog-content {
                 padding: 1rem;
             }
-            
+
             .blog-title {
                 font-size: 1.5rem;
             }
-            
+
             .blog-meta-info {
                 flex-direction: column;
                 gap: 0.5rem;
             }
-            
+
             .blog-list {
                 padding-left: 1.5rem;
             }
         }
         `;
-    }
+  }
 }
 
 // Export for both Node.js and browser environments
-if (typeof module !== 'undefined' && module.exports) {
-    module.exports = ColParser;
-} else if (typeof window !== 'undefined') {
-    window.ColParser = ColParser;
+if (typeof module !== "undefined" && module.exports) {
+  module.exports = ColParser;
+} else if (typeof window !== "undefined") {
+  window.ColParser = ColParser;
 }
