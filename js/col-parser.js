@@ -34,6 +34,7 @@ class ColParser {
             italic: /\*(.*?)\*/g,
             code: /`([^`]+)`/g,
             codeBlock: /```(\w*)\n([\s\S]*?)```/g,
+            footnote: /\[\^(\w+)\]/g,
             link: /\[([^\]]+)\]\(([^)]+)\)/g,
             image: /!\[([^\]]*)\]\(([^)]+)\)/g,
             unorderedList: /^[\s]*[-*+]\s+(.+)$/gm,
@@ -213,6 +214,17 @@ class ColParser {
     }
 
     /**
+     * Converts footnote references to superscript HTML
+     * @param {string} content - Content to process
+     * @returns {string} - Content with footnote superscripts
+     */
+    parseFootnotes(content) {
+        return content.replace(this.patterns.footnote, (match, ref) => {
+            return `<sup class="blog-footnote"><a href="#footnote-${ref}">${ref}</a></sup>`;
+        });
+    }
+
+    /**
      * Converts markdown lists to HTML
      * @param {string} content - Content to process
      * @returns {string} - Content with HTML lists
@@ -339,6 +351,7 @@ class ColParser {
             processedContent = this.parseHeadings(processedContent);
             processedContent = this.parseLinksAndImages(processedContent);
             processedContent = this.parseFormatting(processedContent);
+            processedContent = this.parseFootnotes(processedContent); // Add footnotes before lists
             processedContent = this.parseLists(processedContent);
             processedContent = this.parseBlockElements(processedContent);
             processedContent = this.parseParagraphs(processedContent);
@@ -573,6 +586,21 @@ class ColParser {
             border-radius: 0.25rem;
             font-size: 0.8rem;
             border: 1px solid #333;
+        }
+
+        .blog-footnote {
+            font-size: 0.7em;
+            line-height: 1;
+        }
+
+        .blog-footnote a {
+            color: #00ffff;
+            text-decoration: none;
+            transition: color 0.2s ease;
+        }
+
+        .blog-footnote a:hover {
+            color: #8a2be2;
         }
 
         @media (max-width: 768px) {
