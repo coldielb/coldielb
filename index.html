@@ -55,8 +55,8 @@
 
             .contact {
                 display: flex;
-                gap: 2rem;
-                font-size: 0.9rem;
+                gap: 1.5rem;
+                font-size: 0.8rem;
                 color: #888;
             }
 
@@ -211,6 +211,61 @@
                 color: #888;
             }
 
+            /* Subtle micro-interactions */
+            .name {
+                transition: all 0.2s ease;
+            }
+
+            .name:hover {
+                transform: translateY(-1px);
+            }
+
+            .skill {
+                transition: all 0.2s ease;
+                cursor: pointer;
+            }
+
+            .skill:hover {
+                transform: translateY(-2px);
+                border-color: #555;
+            }
+
+            .skill:active {
+                transform: translateY(0px);
+            }
+
+            .project {
+                transition: all 0.2s ease;
+            }
+
+            .project:hover {
+                transform: translateY(-2px);
+                border-color: #555;
+            }
+
+            .contact a {
+                transition: all 0.2s ease;
+                padding: 2px 4px;
+                border-radius: 3px;
+            }
+
+            .contact a:hover {
+                background-color: rgba(255, 255, 255, 0.05);
+            }
+
+            .section-title {
+                transition: all 0.2s ease;
+            }
+
+            .section-title:hover {
+                transform: translateX(2px);
+            }
+
+            /* Smooth scrolling */
+            html {
+                scroll-behavior: smooth;
+            }
+
             @media (max-width: 768px) {
                 body {
                     padding: 1rem;
@@ -237,6 +292,15 @@
 
                 .skill {
                     font-size: 0.7rem;
+                }
+
+                /* Reduce motion for mobile */
+                .name {
+                    animation: none;
+                }
+
+                .job:hover {
+                    transform: none;
                 }
             }
         </style>
@@ -413,5 +477,17 @@
 
             <p>thanks for stopping by! have a cookie 🍪</p>
         </div>
+
+        <script>
+            // Simple click feedback for skills
+            document.querySelectorAll('.skill').forEach(skill => {
+                skill.addEventListener('click', function() {
+                    this.style.transform = 'scale(0.98)';
+                    setTimeout(() => {
+                        this.style.transform = '';
+                    }, 100);
+                });
+            });
+        </script>
     </body>
 </html>
