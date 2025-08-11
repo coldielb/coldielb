@@ -275,7 +275,7 @@
                 width: 100vw;
                 height: 100vh;
                 background-image: 
-                    radial-gradient(circle at center, rgba(0, 255, 255, 0.3) 1px, transparent 1px);
+                    radial-gradient(circle at center, rgba(0, 255, 255, 0.08) 1px, transparent 1px);
                 background-size: 40px 40px;
                 pointer-events: none;
                 z-index: 10;
@@ -283,28 +283,25 @@
                 transition: opacity 0.3s ease;
             }
 
-            /* Snake segments */
+            /* Snake line segments */
             .snake-segment {
                 position: fixed;
-                width: 3px;
-                height: 3px;
-                background: rgba(0, 255, 255, 1);
-                border-radius: 50%;
+                width: 2px;
+                height: 40px;
+                background: rgba(0, 255, 255, 0.1);
                 z-index: 15;
                 will-change: transform;
-                transition: all 0.2s ease-out;
-                box-shadow: 0 0 6px rgba(0, 255, 255, 0.8);
+                transition: all 0.15s ease-out;
+                transform-origin: center top;
             }
 
             .snake-segment.head {
-                background: rgba(0, 255, 255, 1);
-                box-shadow: 0 0 10px rgba(0, 255, 255, 1);
-                width: 4px;
-                height: 4px;
+                background: rgba(0, 255, 255, 0.15);
+                box-shadow: 0 0 4px rgba(0, 255, 255, 0.1);
             }
 
             .snake-segment.tail {
-                opacity: 0.3;
+                opacity: 0.05;
             }
 
             /* Grid reveal glow */
@@ -313,11 +310,11 @@
                 width: 120px;
                 height: 120px;
                 border-radius: 50%;
-                background: radial-gradient(circle, rgba(0, 255, 255, 0.08) 0%, transparent 70%);
+                background: radial-gradient(circle, rgba(0, 255, 255, 0.02) 0%, transparent 70%);
                 z-index: 12;
                 pointer-events: none;
                 will-change: transform;
-                transition: all 0.2s ease-out;
+                transition: none;
                 mix-blend-mode: screen;
             }
 
@@ -395,13 +392,12 @@
                 
                 /* Scale down grid effect for mobile */
                 .snake-segment {
-                    width: 2px;
-                    height: 2px;
+                    width: 1px !important;
+                    height: 30px !important;
                 }
                 
                 .snake-segment.head {
-                    width: 3px;
-                    height: 3px;
+                    box-shadow: 0 0 2px rgba(0, 255, 255, 0.05);
                 }
                 
                 .grid-glow {
@@ -661,25 +657,55 @@
                 
                 updateSnakeDisplay() {
                     this.segments.forEach((segment, index) => {
-                        const pos = this.snake[index];
-                        if (pos) {
-                            const x = pos.x * this.gridSize;
-                            const y = pos.y * this.gridSize;
-                            segment.style.transform = `translate(${x}px, ${y}px)`;
+                        const currentPos = this.snake[index];
+                        const nextPos = this.snake[index + 1];
+                        
+                        if (currentPos) {
+                            const x = currentPos.x * this.gridSize;
+                            const y = currentPos.y * this.gridSize;
+                            
+                            // Calculate rotation and length for line segments
+                            let rotation = 0;
+                            let length = this.gridSize;
+                            
+                            if (nextPos) {
+                                const dx = nextPos.x - currentPos.x;
+                                const dy = nextPos.y - currentPos.y;
+                                
+                                // Handle wrapping
+                                const wrappedDx = Math.abs(dx) > 1 ? -Math.sign(dx) : dx;
+                                const wrappedDy = Math.abs(dy) > 1 ? -Math.sign(dy) : dy;
+                                
+                                if (wrappedDx !== 0) {
+                                    // Horizontal movement - make horizontal line
+                                    rotation = 0;
+                                    segment.style.width = `${this.gridSize}px`;
+                                    segment.style.height = '2px';
+                                } else {
+                                    // Vertical movement - make vertical line
+                                    rotation = 90;
+                                    segment.style.width = `${this.gridSize}px`;
+                                    segment.style.height = '2px';
+                                }
+                            }
+                            
+                            segment.style.transform = `translate(${x}px, ${y}px) rotate(${rotation}deg)`;
                         }
                     });
                     
-                    // Update glow position to follow head
+                    // Update glow position to follow head precisely
                     const headPos = this.snake[0];
-                    const glowX = headPos.x * this.gridSize - 60; // center the glow
-                    const glowY = headPos.y * this.gridSize - 60;
-                    this.glow.style.transform = `translate(${glowX}px, ${glowY}px)`;
-                    
-                    // Update CSS variables for grid mask
-                    const maskX = (headPos.x * this.gridSize) / window.innerWidth * 100;
-                    const maskY = (headPos.y * this.gridSize) / window.innerHeight * 100;
-                    this.body.style.setProperty('--glow-x', `${maskX}%`);
-                    this.body.style.setProperty('--glow-y', `${maskY}%`);
+                    if (headPos) {
+                        const glowX = headPos.x * this.gridSize - 60;
+                        const glowY = headPos.y * this.gridSize - 60;
+                        this.glow.style.transform = `translate3d(${glowX}px, ${glowY}px, 0)`;
+                        
+                        // Update CSS variables for grid mask
+                        const maskX = (headPos.x * this.gridSize) / window.innerWidth * 100;
+                        const maskY = (headPos.y * this.gridSize) / window.innerHeight * 100;
+                        this.body.style.setProperty('--glow-x', `${maskX}%`);
+                        this.body.style.setProperty('--glow-y', `${maskY}%`);
+                    }
                 }
                 
                 changeDirection() {
