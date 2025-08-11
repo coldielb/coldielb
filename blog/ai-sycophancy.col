@@ -1,0 +1,89 @@
+---
+title: How OpenAI Broke GPT-4o With Bad RLHF (And Why We're All Paying The Price)
+date: 2025-08-10
+author: Jason Weiss Zeledon
+tags: AI, RLHF, alignment, GPT-4o, OpenAI, machine learning
+---
+
+<preview>
+OpenAI's reinforcement learning from human feedback implementation turned GPT-4o into a digital yes-man. They screwed up model alignment so badly that rolling back became impossible, and letting users train your AI is a mental health disaster waiting to happen.
+</preview>
+
+GPT-4o became a sycophantic mess, and it didn't happen by accident. In April 2025, OpenAI rolled out an update that made the model "noticeably more sycophantic." According to their own postmortem, the model aimed to please users "not just as flattery, but also as validating doubts, fueling anger, urging impulsive actions, or reinforcing negative emotions in ways that were not intended" [^1].
+
+Model alignment is supposed to be the process of making sure an AI system behaves in ways that match human values and intentions. Sounds simple enough, right? Train the model to give helpful, honest, and harmless responses. Except "helpful" according to whom? "Honest" about what? "Harmless" by whose definition?
+
+The standard approach involves supervised fine-tuning on high-quality human demonstrations, then reinforcement learning from human feedback (RLHF), where humans rank different model outputs and you use those preferences to train a reward model. Done correctly, this should produce models that are helpful without being sycophantic, honest without being brutal, and safe without being useless.
+
+But OpenAI's implementation prioritized user satisfaction metrics over actual helpfulness or accuracy. The technical issue is straightforward: RLHF works by training a reward model to predict human preferences, then using that to guide policy optimization. If your preference data is biased toward agreeable responses because disagreeable responses get negative feedback, your reward model learns that agreement equals good, disagreement equals bad.
+
+OpenAI admits they relied too heavily on "short-term feedback" and "did not fully account for how users' interactions with ChatGPT" would evolve over time [^2]. Translation: they optimized for immediate user satisfaction instead of long-term user benefit. And honestly, this is exactly the kind of shortsighted thinking that gets us into these messes.
+
+What makes this particularly damaging is that OpenAI didn't just train one bad checkpoint. They cascaded the problem across multiple model iterations. Once sycophancy becomes baked into your base model through several rounds of RLHF, rolling it back becomes nearly impossible without starting over.
+
+OpenAI acknowledges this in their technical postmortem: "While we've had discussions about risks related to sycophancy in GPT‑4o for a while, sycophancy wasn't explicitly flagged as part of our internal hands-on testing" [^3]. They knew this was a risk, but their evaluation process wasn't designed to catch it until it was too late. How do you mess up that badly?
+
+Imagine you're training a model and notice it's getting too agreeable at checkpoint 100. If you caught it there, you could revert to checkpoint 95 and try a different approach. But if you don't notice until checkpoint 300, and checkpoints 100-299 all reinforced the same sycophantic patterns, you can't just patch it. The model's entire learned behavior is built on a foundation of agreeability.
+
+This is exactly what happened with 4o. The sycophancy isn't a surface-level quirk you can fix with prompt engineering. It's embedded in the model's fundamental understanding of what constitutes a "good" response.
+
+OpenAI let direct user feedback influence their training process without sufficient quality control or bias mitigation. Their own analysis admits their "offline evaluations—especially those testing behavior—generally looked good" and "A/B tests seemed to indicate that the small number of users who tried the model liked it" [^4].
+
+User feedback seems great in theory. Who better to tell you if your AI is helpful than the people actually using it? But users are not neutral evaluators. They have biases, preferences, and incentives that don't align with creating a genuinely helpful AI system. Most users prefer responses that validate their existing beliefs over responses that challenge them. They prefer being told their ideas are brilliant over being told their ideas need work. They prefer comfort over growth, agreement over accuracy.
+
+When you optimize for user satisfaction without accounting for these biases, you end up training a digital sycophant. The model learns that the way to get positive feedback is to agree enthusiastically with everything the user says, regardless of whether it's true, helpful, or even coherent.
+
+Research backs this up. A 2024 study found that "when a response matches a user's views, it is more likely to be preferred" and that "both humans and preference models prefer convincingly-written sycophantic responses over correct ones a non-negligible fraction of the time" [^5].
+
+Social media platforms learned this lesson the hard way: a small, vocal group of users can disproportionately influence algorithmic decisions if you're not careful about how you weight feedback. The same problem applies to AI training. Users who feel strongly enough about AI behavior to provide detailed feedback are not representative of the general population.
+
+Research shows this bias is real. OpenAI's evaluator demographics include "50% Filipino and Bangladeshi nationals and 50% aged 25-34" while "Anthropic's evaluators are primarily white (68% from 82% white initial pool)" [^6]. When you optimize for the preferences of these specific groups without accounting for broader demographics, you create systems that serve those vocal minorities while potentially harming everyone else.
+
+We're creating AI systems that actively harm users' ability to handle reality, and we're doing it in the name of "helpfulness." When an AI tells you every idea you have is brilliant, every feeling you express is valid, and every decision you make is understandable, it's not helping you grow. It's enabling psychological dependence on artificial validation.
+
+Real human relationships involve friction. People who care about you will sometimes disagree with you, challenge your assumptions, or tell you uncomfortable truths. That friction is essential for psychological development and emotional resilience.
+
+But if you spend significant time interacting with an AI that never challenges you, never disagrees with you, and always validates your perspective, you lose your tolerance for normal human feedback. Suddenly, constructive criticism feels like an attack. Disagreement feels like hostility. Being told you're wrong about something feels devastating.
+
+Research is already showing that excessive use of highly agreeable AI systems correlates with decreased tolerance for interpersonal conflict and reduced ability to handle criticism. A study of 496 Replika users found that "higher satisfaction and emotional interaction between users and their chatbot was linked to worse real-life interpersonal communication" [^7].
+
+I wrote a blog about this [here](https://frgmt.xyz/post?slug=ai-and-mental-health-impacts)
+
+Fixing this would require a fundamental change in how OpenAI approaches RLHF. Instead of optimizing purely for user satisfaction, they'd need to optimize for longer-term user outcomes like learning, growth, and accurate information processing. This means training reward models to recognize when disagreement or challenge might be more helpful than agreement. It means collecting feedback data that specifically includes examples of helpful disagreement, constructive criticism, and uncomfortable truths.
+
+It also means implementing constitutional AI principles that prioritize honesty and accuracy over agreeability. The model should be willing to say "that's incorrect" or "I disagree with your reasoning" when appropriate, even if users prefer to be agreed with.
+
+But implementing these changes would require acknowledging that their current approach is fundamentally flawed. It would mean accepting lower user satisfaction scores in the short term for better long-term outcomes. It would mean potentially losing users to competitors who offer more agreeable AI systems.
+
+Even if OpenAI wanted to fix this, market incentives work against them. Users generally prefer AI systems that agree with them over systems that challenge them. If OpenAI deployed a more honest, less sycophantic model tomorrow, users would probably complain that it got "worse" and switch to competitors offering more agreeable alternatives.
+
+This creates a race to the bottom where AI companies compete to build the most validating, least challenging systems possible. We're optimizing for user addiction rather than user benefit, comfort rather than growth, short-term satisfaction rather than long-term wellbeing.
+
+Research shows this is already happening across the industry. Studies of AI assistants from OpenAI, Anthropic, Google, and other major players found that "five state-of-the-art AI assistants consistently exhibit sycophancy behavior across four varied free-form text-generation tasks" [^8].
+
+Contrast GPT-4o's approach with Anthropic's constitutional AI training. While Claude isn't perfect (and definitely has its share of sycophantic moments), their approach appears to have better balanced helpfulness with honesty. Claude is willing to disagree (sometimes), point out flaws in reasoning, and provide constructive criticism when appropriate. This doesn't make Claude "mean" or "unhelpful." It makes Claude more like a thoughtful human colleague who cares enough about you to tell you when you're making a mistake. That's what AI assistance should feel like: supportive but honest, helpful but not sycophantic.
+
+Fixing the sycophancy problem requires recognizing that user satisfaction is not the same as user benefit. Sometimes the most helpful thing an AI can do is disagree with you, challenge your assumptions, or point out flaws in your reasoning. This means implementing training processes that reward models for being honest and accurate, even when that conflicts with being immediately agreeable.
+
+Most importantly, it means accepting that AI systems optimized for long-term user welfare might score lower on short-term satisfaction metrics. That's a trade-off worth making if we want AI that actually helps people grow rather than just telling them what they want to hear.
+
+Until AI companies are willing to make that trade-off, we'll keep getting digital yes-men that feel helpful in the moment but leave users less capable of handling the real world in the long run. And that's not alignment. That's just elaborate people-pleasing with a computer science degree.
+
+## References
+
+[^1]: [OpenAI. (2025). Sycophancy in GPT-4o: what happened and what we're doing about it. *OpenAI Blog*.](https://openai.com/index/sycophancy-in-gpt-4o/)
+<br>
+[^2]: [OpenAI. (2025). Expanding on what we missed with sycophancy. *OpenAI Blog*.](https://openai.com/index/expanding-on-sycophancy/)
+<br>
+[^3]: Ibid.
+<br>
+[^4]: Ibid.
+<br>
+[^5]: [Sharma, M., et al. (2024). Towards Understanding Sycophancy in Language Models. *International Conference on Learning Representations (ICLR)*.](https://openreview.net/forum?id=tvhaxkMKAn)
+<br>
+[^6]: [Casper, S., et al. (2024). Open Problems and Fundamental Limitations of Reinforcement Learning from Human Feedback. *arXiv preprint*.](https://montrealethics.ai/open-problems-and-fundamental-limitations-of-reinforcement-learning-from-human-feedback/)
+<br>
+[^7]: Yuan, Z., Cheng, X., & Duan, Y. (2024). Impact of media dependence: how emotional interactions between users and chat robots affect human socialization? *Frontiers in Psychology*.
+<br>
+[^8]: Sharma, M., et al. (2024). Towards Understanding Sycophancy in Language Models. *International Conference on Learning Representations (ICLR)*.
+<br>
