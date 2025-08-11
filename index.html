@@ -266,6 +266,96 @@
                 scroll-behavior: smooth;
             }
 
+            /* Grid overlay foundation */
+            body::after {
+                content: '';
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100vw;
+                height: 100vh;
+                background-image: 
+                    radial-gradient(circle at center, rgba(0, 255, 255, 0.3) 1px, transparent 1px);
+                background-size: 40px 40px;
+                pointer-events: none;
+                z-index: 10;
+                opacity: 0;
+                transition: opacity 0.3s ease;
+            }
+
+            /* Snake segments */
+            .snake-segment {
+                position: fixed;
+                width: 3px;
+                height: 3px;
+                background: rgba(0, 255, 255, 1);
+                border-radius: 50%;
+                z-index: 15;
+                will-change: transform;
+                transition: all 0.2s ease-out;
+                box-shadow: 0 0 6px rgba(0, 255, 255, 0.8);
+            }
+
+            .snake-segment.head {
+                background: rgba(0, 255, 255, 1);
+                box-shadow: 0 0 10px rgba(0, 255, 255, 1);
+                width: 4px;
+                height: 4px;
+            }
+
+            .snake-segment.tail {
+                opacity: 0.3;
+            }
+
+            /* Grid reveal glow */
+            .grid-glow {
+                position: fixed;
+                width: 120px;
+                height: 120px;
+                border-radius: 50%;
+                background: radial-gradient(circle, rgba(0, 255, 255, 0.08) 0%, transparent 70%);
+                z-index: 12;
+                pointer-events: none;
+                will-change: transform;
+                transition: all 0.2s ease-out;
+                mix-blend-mode: screen;
+            }
+
+            /* Reveal grid within glow */
+            body.grid-active::after {
+                opacity: 1;
+                mask: radial-gradient(circle 75px at var(--glow-x, 0) var(--glow-y, 0), 
+                      rgba(255,255,255,1) 0%, 
+                      rgba(255,255,255,0.8) 40%, 
+                      transparent 70%);
+                -webkit-mask: radial-gradient(circle 75px at var(--glow-x, 0) var(--glow-y, 0), 
+                              rgba(255,255,255,1) 0%, 
+                              rgba(255,255,255,0.8) 40%, 
+                              transparent 70%);
+            }
+
+            /* Performance optimizations */
+            .grid-line, .grid-glow {
+                transform: translateZ(0);
+                backface-visibility: hidden;
+                perspective: 1000px;
+            }
+
+            /* Reduce motion for users who prefer it */
+            @media (prefers-reduced-motion: reduce) {
+                .snake-segment {
+                    transition: none;
+                }
+                
+                .grid-glow {
+                    transition: none;
+                }
+                
+                body::after {
+                    opacity: 0.1 !important;
+                }
+            }
+
             @media (max-width: 768px) {
                 body {
                     padding: 1rem;
@@ -302,10 +392,34 @@
                 .job:hover {
                     transform: none;
                 }
+                
+                /* Scale down grid effect for mobile */
+                .snake-segment {
+                    width: 2px;
+                    height: 2px;
+                }
+                
+                .snake-segment.head {
+                    width: 3px;
+                    height: 3px;
+                }
+                
+                .grid-glow {
+                    width: 80px;
+                    height: 80px;
+                }
+                
+                body::after {
+                    background-size: 30px 30px;
+                }
             }
         </style>
     </head>
     <body>
+        <!-- Grid effect elements -->
+        <div class="grid-glow"></div>
+        <div id="snake-container"></div>
+        
         <div class="header">
             <h1 class="name">Jason Weiss Zeledon</h1>
             <h2 class="title">Full Stack Developer</h2>
@@ -487,6 +601,160 @@
                         this.style.transform = '';
                     }, 100);
                 });
+            });
+
+            // Grid-based Snake Effect
+            class GridSnake {
+                constructor() {
+                    // Responsive grid size
+                    this.gridSize = window.innerWidth < 768 ? 30 : 40; // matches CSS grid size
+                    this.snakeLength = 18; // ~3/4 inch worth of segments
+                    this.snake = [];
+                    this.direction = { x: 1, y: 0 };
+                    this.container = document.getElementById('snake-container');
+                    this.glow = document.querySelector('.grid-glow');
+                    this.body = document.body;
+                    
+                    // Check for reduced motion preference
+                    this.reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+                    
+                    this.initGrid();
+                    this.createSnake();
+                    if (!this.reducedMotion) {
+                        this.startAnimation();
+                    }
+                }
+                
+                initGrid() {
+                    this.cols = Math.floor(window.innerWidth / this.gridSize);
+                    this.rows = Math.floor(window.innerHeight / this.gridSize);
+                    
+                    // Start position
+                    this.head = {
+                        x: Math.floor(this.cols / 4),
+                        y: Math.floor(this.rows / 2)
+                    };
+                    
+                    // Initialize snake body
+                    for (let i = 0; i < this.snakeLength; i++) {
+                        this.snake.push({
+                            x: this.head.x - i,
+                            y: this.head.y
+                        });
+                    }
+                }
+                
+                createSnake() {
+                    // Create snake segments
+                    this.segments = [];
+                    for (let i = 0; i < this.snakeLength; i++) {
+                        const segment = document.createElement('div');
+                        segment.className = 'snake-segment';
+                        if (i === 0) segment.classList.add('head');
+                        if (i === this.snakeLength - 1) segment.classList.add('tail');
+                        this.container.appendChild(segment);
+                        this.segments.push(segment);
+                    }
+                    
+                    this.updateSnakeDisplay();
+                }
+                
+                updateSnakeDisplay() {
+                    this.segments.forEach((segment, index) => {
+                        const pos = this.snake[index];
+                        if (pos) {
+                            const x = pos.x * this.gridSize;
+                            const y = pos.y * this.gridSize;
+                            segment.style.transform = `translate(${x}px, ${y}px)`;
+                        }
+                    });
+                    
+                    // Update glow position to follow head
+                    const headPos = this.snake[0];
+                    const glowX = headPos.x * this.gridSize - 60; // center the glow
+                    const glowY = headPos.y * this.gridSize - 60;
+                    this.glow.style.transform = `translate(${glowX}px, ${glowY}px)`;
+                    
+                    // Update CSS variables for grid mask
+                    const maskX = (headPos.x * this.gridSize) / window.innerWidth * 100;
+                    const maskY = (headPos.y * this.gridSize) / window.innerHeight * 100;
+                    this.body.style.setProperty('--glow-x', `${maskX}%`);
+                    this.body.style.setProperty('--glow-y', `${maskY}%`);
+                }
+                
+                changeDirection() {
+                    const directions = [
+                        { x: 1, y: 0 },  // right
+                        { x: -1, y: 0 }, // left
+                        { x: 0, y: 1 },  // down
+                        { x: 0, y: -1 }  // up
+                    ];
+                    
+                    // Avoid immediate reversal
+                    const validDirections = directions.filter(dir => 
+                        !(dir.x === -this.direction.x && dir.y === -this.direction.y)
+                    );
+                    
+                    // Bias towards continuing straight or gentle turns
+                    const weights = validDirections.map(dir => {
+                        if (dir.x === this.direction.x && dir.y === this.direction.y) return 3; // continue straight
+                        return 1; // turn
+                    });
+                    
+                    // Weighted random selection
+                    const totalWeight = weights.reduce((a, b) => a + b, 0);
+                    let random = Math.random() * totalWeight;
+                    
+                    for (let i = 0; i < validDirections.length; i++) {
+                        random -= weights[i];
+                        if (random <= 0) {
+                            this.direction = validDirections[i];
+                            break;
+                        }
+                    }
+                }
+                
+                move() {
+                    // Calculate new head position
+                    const newHead = {
+                        x: this.snake[0].x + this.direction.x,
+                        y: this.snake[0].y + this.direction.y
+                    };
+                    
+                    // Wrap around screen edges
+                    if (newHead.x < 0) newHead.x = this.cols - 1;
+                    if (newHead.x >= this.cols) newHead.x = 0;
+                    if (newHead.y < 0) newHead.y = this.rows - 1;
+                    if (newHead.y >= this.rows) newHead.y = 0;
+                    
+                    // Add new head and remove tail
+                    this.snake.unshift(newHead);
+                    this.snake.pop();
+                    
+                    // Random direction changes
+                    if (Math.random() < 0.2) { // 20% chance to change direction
+                        this.changeDirection();
+                    }
+                    
+                    this.updateSnakeDisplay();
+                }
+                
+                startAnimation() {
+                    // Activate grid after delay
+                    setTimeout(() => {
+                        this.body.classList.add('grid-active');
+                    }, 500);
+                    
+                    // Move snake every 150ms
+                    setInterval(() => {
+                        this.move();
+                    }, 150);
+                }
+            }
+
+            // Initialize when page loads
+            document.addEventListener('DOMContentLoaded', () => {
+                new GridSnake();
             });
         </script>
     </body>
