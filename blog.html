@@ -114,6 +114,76 @@
                 gap: 2rem;
             }
 
+            /* Footer styling */
+            .footer {
+                margin-top: 4rem;
+                padding: 2rem 0;
+                border-top: 1px solid #333;
+                text-align: center;
+            }
+
+            .support-text {
+                font-size: 1rem;
+                color: #ccc;
+                margin-bottom: 1.5rem;
+                font-weight: 400;
+            }
+
+            .donation-links {
+                display: flex;
+                justify-content: center;
+                gap: 1rem;
+                flex-wrap: wrap;
+            }
+
+            .donation-link {
+                padding: 0.75rem 1.5rem;
+                border: 1px solid #333;
+                border-radius: 6px;
+                text-decoration: none;
+                color: #ccc;
+                transition: all 0.2s ease;
+                background: rgba(0, 0, 0, 0.3);
+                font-size: 0.9rem;
+                font-weight: 500;
+            }
+
+            .donation-link:hover {
+                border-color: #555;
+                background: rgba(255, 255, 255, 0.05);
+                transform: translateY(-2px);
+            }
+
+            .donation-link[data-platform="cashapp"]:hover {
+                border-color: #00d632;
+                color: #00d632;
+            }
+
+            .donation-link[data-platform="venmo"]:hover {
+                border-color: #3d95ce;
+                color: #3d95ce;
+            }
+
+            .donation-link[data-platform="paypal"]:hover {
+                border-color: #0070ba;
+                color: #0070ba;
+            }
+
+            @media (max-width: 768px) {
+                .donation-links {
+                    gap: 0.75rem;
+                }
+                
+                .donation-link {
+                    padding: 0.5rem 1rem;
+                    font-size: 0.8rem;
+                }
+                
+                .support-text {
+                    font-size: 0.9rem;
+                }
+            }
+
             .post-card {
                 border: 1px solid #333;
                 border-radius: 0.5rem;
@@ -322,6 +392,16 @@
         <div id="postsContainer">
             <div class="loading">Loading blog posts...</div>
         </div>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <p class="support-text">Support what I make? Consider donating!</p>
+            <div class="donation-links">
+                <a href="https://cash.app/$tylerthebean" class="donation-link" data-platform="cashapp" target="_blank">CashApp</a>
+                <a href="https://venmo.com/u/JasonWZ" class="donation-link" data-platform="venmo" target="_blank">Venmo</a>
+                <a href="https://paypal.me/jasonawz" class="donation-link" data-platform="paypal" target="_blank">PayPal</a>
+            </div>
+        </footer>
 
         <script src="js/col-parser.js"></script>
         <script>
