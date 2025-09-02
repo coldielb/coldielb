@@ -1,0 +1,190 @@
+---
+title: Why Google's TPUs is Reshaping AI Economics
+date: 2025-08-21
+author: Jason Weiss Zeledon
+tags: AI, TPU, machine learning, Google, hardware, silicon
+---
+
+<preview>
+while everyone's obsessing over nvidia's gpu dominance, google's been quietly (or loudly depending on how you look at it) building the most efficient AI hardware on the planet. ten years later, TPUs are powering gemini, making google the only profitable AI lab (*speculation*), and proving that custom silicon beats general-purpose compute when you know exactly what you're doing.
+</preview>
+
+## a little lesson in history
+
+norman jouppi didn't set out to make artificial intelligence more efficient to run. he was already a big deal in computing, one of the principal architects of the MIPS processor and a pioneer in memory systems [^1]. when he joined google in 2013, the company was facing a crisis... well maybe not a crisis but definitely something they saw as high priority.
+
+if google users started using voice search for just three minutes a day, the company would need to double the number of computers in its data centers [^2]. that wasn't sustainable. that wasn't even possible.
+
+so jouppi and his team did something unprecedented. in *just* 15 months, starting in late 2013, they designed and deployed the first tensor processing unit (TPU) [^3]. not a prototype. not a research project. a full on production chip running real workloads in google's data centers.
+
+"we started shipping the first silicon with no bug fixes or mask changes," jouppi recalls. "considering we were hiring the team as we were building the chip, then hiring RTL people and rushing to hire design verification people, it was hectic" [^4].
+
+they called it the tensor processing unit because it was built for one thing: accelerating tensor operations, the matrix mathematics that power neural networks [^5].
+
+## why TPUs exist (and why they had to)
+
+to understand why google built TPUs, you need to understand why gpus weren't enough. gpus are incredible feats of engineering. thousands of cores running in parallel, originally designed for graphics but repurposed for AI when researchers realized they were good at matrix math [^6].
+
+but gpus are general-purpose processors. they have to support millions of different applications and software. so while a gpu can run multiple functions at once, it must constantly access memory to read and store intermediate calculation results [^7]. since gpus perform tons of parallel calculations on thousands of arithmetic logic units (ALUs), they expend massive amounts of energy accessing memory.
+
+TPUs took a different approach.
+
+instead of thousands of general-purpose cores, TPUs use something called a systolic array. it's a grid of interconnected processing elements that pass data rhythmically across the chip [^8]. think of it like a factory assembly line, but for matrix multiplication.
+
+once you feed data into a systolic array in the right order, the flow of values through the system ensures that the required results emerge automatically. there's no need to constantly fetch intermediate results from memory because the data flows naturally through the array [^9].
+
+the first-generation TPU contained a 256×256 systolic array of 8-bit multipliers. that's 65,536 multiply-accumulate units running in perfect synchronization [^10]. compared to a few thousand 32-bit floating-point multipliers in contemporary gpus, this was a fundamentally different approach to computation.
+
+## the architecture
+
+where modern cpus follow the reduced instruction set computer (RISC) philosophy of simple instructions executed as fast as possible, TPUs went with complex instruction set computer (CISC) design. instead of basic operations like "add" or "multiply," TPU instructions handle entire matrix operations in a single command [^11].
+
+this allowed TPUs to be programmed like cpus or gpus while using matrices as primitives instead of scalars or vectors. the TPU executes CISC instructions for many different neural network models. convolutional networks, LSTM models, large fully connected models. it's programmable but specialized [^12].
+
+the first TPU had 28 MiB of on-chip memory and 4 MiB of accumulators, with 8 GiB of DDR3 SDRAM providing 34 GB/s of bandwidth [^13]. this memory was used as one parallel unit to feed the massive systolic array.
+
+"the DRAM on the TPU is operated as one unit in parallel because of the need to fetch so many weights to feed to the matrix multiplication unit (on the order of 64,000 for a sense of throughput)," jouppi explained [^14].
+
+## performance
+
+on production AI workloads, the TPU was 15x to 30x faster than contemporary gpus and cpus. more importantly, it achieved 30x to 80x better energy efficiency [^15].
+
+let me put that in perspective. TPUs didn't just run neural networks faster. they also managed to use a fraction of the power to do it. and that's pretty impressive when you consider that data centers are power-hungry beasts. every few watts saved per operation scales to megawatts when you're running millions of inferences per second.
+
+this wasn't theoretical performance on artificial benchmarks. these were real and tangible workloads: ranking search results with RankBrain, processing text in google street view (they found all the text in the entire street view database in less than five days), analyzing photos (one TPU could process over 100 million photos per day) [^16].
+
+the TPU also powered some of the most famous AI achievements of the era. alphago used TPUs when it defeated lee sedol in 2016. alphazero, which learned chess, shogi, and go from scratch and beat the world's best programs in each game, ran entirely on TPUs [^17].
+
+## why google chose TPUs over other alternatives
+
+in 2013, google had options. they could have used FPGAs (field-programmable gate arrays), which offer flexibility but sacrifice performance. they could have also doubled down on gpus. they could have built entirely different types of custom silicon.
+
+jouppi's team initially looked at FPGAs but quickly realized the fundamental tradeoff. "the fundamental bargain people make with FPGAs is that they want something that is easy to change but because of the programmability and other hurdles, compared with an ASIC, there ends up being a big difference in performance and performance per watt" [^18].
+
+gpus had their own problems. as general-purpose processors, they needed to support vast software ecosystems. every calculation required memory access to read operands and store results. for the specific workload of tensor operations, this was massively inefficient.
+
+TPUs offered google this alternative: application-specific integrated circuits (ASICs) designed exclusively for neural network workloads. they gave up flexibility to maximize efficiency for the one thing that mattered most to google: matrix multiplication (so they could collect more data on you duh).
+
+"when we were looking at FPGAs as one idea and saw that wouldn't work we started thinking about the amount of silicon we could get out of 28nm. that allows for things that were unheard of back in the day when the vector was a high end machine," jouppi said. "now, we can take it to the next level with a tensor processing unit with the matrices at the heart" [^19].
+
+the decision came down to focus. google knew exactly what computations they needed to accelerate. unlike chip companies that need to serve diverse markets, google could optimize for their specific workloads.
+
+## modern applications
+
+it's now 2025, and TPUs power virtually every AI-driven google service. search results, youtube recommendations, gmail spam filtering, google photos organization, google maps traffic predictions, android features. all running on TPU silicon [^20].
+
+the applications have expanded far beyond google's own products. companies like aws, anthropic, midjourney, and salesforce build their AI infrastructure on the backs of TPUs (in conjunction with contemporary GPUs as well) [^21]. the cost and power efficiency advantages, combined with advanced compiler optimizations, make TPUs attractive for any organization running large-scale AI workloads.
+
+TPUs excel at large language models, computer vision, and recommendation systems. they struggle with models that branch frequently, small batch sizes, or operations that don't involve heavy matrix multiplication.
+
+## google gemini's TPU efficiency advantage
+
+google trained their entire gemini model family (flash, pro, and ultra; although ultra isn't offered anymore it was worth noting) exclusively on TPUs [^22]. not a hybrid approach. not supplemented with gpus. 100% TPU training.
+
+gemini ultra, their most capable model at the time, was trained using "a large fleet of TPUv4 accelerators" [^23]. the pro model was trained in weeks using "a fraction of the ultra's resources." this efficiency isn't just about the raw performance. it's about economic sustainability. if it costs less to ship a more powerful model faster, you can iterate more quickly, deploy more frequently, and ultimately deliver better products, which means more money to repeat the process, and give everyone fat bonuses.
+
+google's deepmind reports seeing 2x speedups for LLM training workloads on TPU v5p compared to TPU v4 [^24]. but the real advantage isn't just speed. it's the integrated optimization across hardware, software, and model architecture.
+
+TPUs are designed specifically for google's tensorflow and JAX frameworks. the XLA compiler performs sophisticated optimizations that are impossible with general-purpose hardware. techniques like automatic tiling of matrix operations, memory layout optimization, and dataflow scheduling extract maximum performance from the silicon [^25].
+
+most importantly, TPUs provide consistent, predictable performance. while gpu clusters can suffer from memory bandwidth bottlenecks, communication overhead, and resource contention, TPU pods are designed as coherent systems from the ground up.
+
+## the profitability factor
+
+google might be the only profitable large-scale AI company, and TPUs are likely a big reason why (this is pure speculation, i don't have insight into the profitability of Google DeepMind or Google's AI division as a whole).
+
+industry analysis suggests google obtains AI compute power at roughly 20% the cost of companies purchasing high-end nvidia gpus. that's a 4x to 6x cost efficiency advantage [^26]. nvidia commands gross margins estimated at 80% for data center chips like the H100 and B100, meaning hyperscalers pay massive markups for compute power [^27].
+
+google bypasses this "nvidia tax" entirely. they design their own silicon, manufacture it at scale, and optimize software specifically for their hardware. this essentially allows them to drive the cost of their models down, making it appealing to more users. which in turn drives more revenue. it's a virtuous cycle. now, i could be entirely wrong about this. Google could price thier models insanely cheap because they are betting on users using more of their services and thus generating more revenue. but i think the TPU advantage is definitely big part of the equation.
+
+openai reportedly spends $40 billion annually on compute (with inference operations accounting for nearly half), google trains and serves comparable models at a fraction of the cost [^28]. this cost efficiency cascades through everything: API pricing, research budgets, model iteration speed, and long-term sustainability as stated throughout this post.
+
+the economic advantage is becoming more apparent as AI scales. openai is exploring massive data center projects with softbank and oracle, negotiating revised revenue share agreements with microsoft, all while struggling with the cost structure of nvidia hardware [^29]. meanwhile, google continues expanding its TPU infrastructure, with over 100,000 trillium chips in single systems delivering 13 petabits per second of bandwidth [^30].
+
+## when TPUs don't provide advantages over gpus
+
+TPUs aren't magic. they're hyper-specialized tools that excel in specific scenarios but struggle in others.
+
+if your team is deeply invested in pytorch, the transition can be painful. TPUs work best at massive scale, so small models or low-traffic inference might not justify the optimization overhead. gpus also have mature ecosystems with thousands of libraries, making them better for custom operations or research where you're frequently changing architectures. for real-time applications with unpredictable workloads, gpus can be more responsive.
+
+## why doesn't everyone have TPUs?
+
+if TPUs are so efficient, why isn't everyone using them? why doesn't every laptop, phone and earbud have a TPU?
+
+google doesn't sell TPU cards like nvidia sells gpus. you can't buy a TPU and install it in your server. you can only access TPUs through google cloud platform [^31]. TPUs give google a competitive advantage precisely because competitors can't access the same hardware. and if your competitors can't access the same hardware, they can't compete with you. full stop.
+even if google wanted to sell TPUs broadly, they just don't have the production capacity. as one industry analyst noted, "google doesn't have enough capacity internally and at TSMC to produce enough TPUs for everyone" [^32]. google prioritizes internal workloads and cloud customers over potential hardware sales.
+nvidia's CUDA has a decade-plus head start with millions of developers. while TPUs support tensorflow, JAX, and increasingly pytorch, the software ecosystem isn't as mature. transitioning existing codebases to TPUs requires expertise that many organizations lack. especially if your team consists of researchers and data scientists or hobbyists rather than software engineers who previously worked at Google or AWS.
+adopting TPUs also means betting on google's continued commitment to the technology and pricing. for many enterprises, the flexibility of nvidia gpus (available from multiple cloud providers and as standalone hardware) outweighs TPU efficiency gains. AWS has their own custom chips (Trainium and Inferentia), but these face similar ecosystem challenges compared to nvidia's dominance.
+
+---
+
+*this is part one of a deep dive into TPUs. part two will explore the latest developments, compare current TPU generations, examine the competitive landscape, and analyze what TPU advantages mean for the future of AI hardware.*
+
+## references
+
+[^1]: [The Chip Letter. (2024). Google's First Tensor Processing Unit: Origins.](https://thechipletter.substack.com/p/googles-first-tensor-processing-unit)
+<br>
+[^2]: [Google Cloud Blog. (2017). Quantifying the performance of the TPU, our first machine learning chip.](https://cloud.google.com/blog/products/gcp/quantifying-the-performance-of-the-tpu-our-first-machine-learning-chip)
+<br>
+[^3]: [Google Cloud Blog. (2024). TPU transformation: A look back at 10 years of our AI-specialized chips.](https://cloud.google.com/transform/ai-specialized-chips-tpu-history-gen-ai)
+<br>
+[^4]: [Next Platform. (2017). First In-Depth Look at Google's TPU Architecture.](https://www.nextplatform.com/2017/04/05/first-depth-look-googles-tpu-architecture/)
+<br>
+[^5]: [TechTarget. What is a tensor processing unit (TPU)?](https://www.techtarget.com/whatis/definition/tensor-processing-unit-TPU)
+<br>
+[^6]: [CloudOptimo. (2025). TPU vs GPU: What's the Difference in 2025?](https://www.cloudoptimo.com/blog/tpu-vs-gpu-what-is-the-difference-in-2025/)
+<br>
+[^7]: [OpenMetal. (2021). TPU vs GPU: Pros and Cons.](https://openmetal.io/docs/product-guides/private-cloud/tpu-vs-gpu-pros-and-cons/)
+<br>
+[^8]: [DataCamp. (2024). Understanding TPUs vs GPUs in AI: A Comprehensive Guide.](https://www.datacamp.com/blog/tpu-vs-gpu-ai)
+<br>
+[^9]: [The Chip Letter. (2024). Google's First Tensor Processing Unit - Architecture.](https://thechipletter.substack.com/p/googles-first-tpu-architecture)
+<br>
+[^10]: [Google Cloud Blog. (2017). An in-depth look at Google's first Tensor Processing Unit (TPU).](https://cloud.google.com/blog/products/ai-machine-learning/an-in-depth-look-at-googles-first-tensor-processing-unit-tpu)
+<br>
+[^11]: [Google Cloud Blog. (2017). An in-depth look at Google's first Tensor Processing Unit (TPU).](https://cloud.google.com/blog/products/ai-machine-learning/an-in-depth-look-at-googles-first-tensor-processing-unit-tpu)
+<br>
+[^12]: [Next Platform. (2017). First In-Depth Look at Google's TPU Architecture.](https://www.nextplatform.com/2017/04/05/first-depth-look-googles-tpu-architecture/)
+<br>
+[^13]: [Wikipedia. Tensor Processing Unit.](https://en.wikipedia.org/wiki/Tensor_Processing_Unit)
+<br>
+[^14]: [Next Platform. (2017). First In-Depth Look at Google's TPU Architecture.](https://www.nextplatform.com/2017/04/05/first-depth-look-googles-tpu-architecture/)
+<br>
+[^15]: [Google Cloud Blog. (2017). Quantifying the performance of the TPU, our first machine learning chip.](https://cloud.google.com/blog/products/gcp/quantifying-the-performance-of-the-tpu-our-first-machine-learning-chip)
+<br>
+[^16]: [Wikipedia. Tensor Processing Unit.](https://en.wikipedia.org/wiki/Tensor_Processing_Unit)
+<br>
+[^17]: [Wikipedia. Tensor Processing Unit.](https://en.wikipedia.org/wiki/Tensor_Processing_Unit)
+<br>
+[^18]: [Next Platform. (2017). First In-Depth Look at Google's TPU Architecture.](https://www.nextplatform.com/2017/04/05/first-depth-look-googles-tpu-architecture/)
+<br>
+[^19]: [Next Platform. (2017). First In-Depth Look at Google's TPU Architecture.](https://www.nextplatform.com/2017/04/05/first-depth-look-googles-tpu-architecture/)
+<br>
+[^20]: [Google Cloud. Tensor Processing Units (TPUs).](https://cloud.google.com/tpu)
+<br>
+[^21]: [CNBC. (2024). How Google makes custom chips used to train Apple AI models and its own chatbot, Gemini.](https://www.cnbc.com/2024/08/23/how-google-makes-custom-cloud-chips-that-power-apple-ai-and-gemini.html)
+<br>
+[^22]: [X/Twitter. (2024). Daniel Newman: "100% of Google Gemini was trained using TPU."](https://x.com/danielnewmanUV/status/1777846396487700484)
+<br>
+[^23]: [Data Center Dynamics. (2023). Training Google's Gemini: TPUs, multiple data centers, and risks of cosmic rays.](https://www.datacenterdynamics.com/en/news/training-gemini-tpus-multiple-data-centers-and-risks-of-cosmic-rays/)
+<br>
+[^24]: [Google Cloud Blog. (2023). Introducing Cloud TPU v5p and AI Hypercomputer.](https://cloud.google.com/blog/products/ai-machine-learning/introducing-cloud-tpu-v5p-and-ai-hypercomputer)
+<br>
+[^25]: [Google Cloud. Introduction to Cloud TPU.](https://cloud.google.com/tpu/docs/intro-to-tpu)
+<br>
+[^26]: [Nasdaq. (2024). The Cost of AI Compute: Google's TPU Advantage vs. OpenAI's Nvidia Tax.](https://www.nasdaq.com/articles/cost-ai-compute-googles-tpu-advantage-vs-openais-nvidia-tax)
+<br>
+[^27]: [Nasdaq. (2024). The Cost of AI Compute: Google's TPU Advantage vs. OpenAI's Nvidia Tax.](https://www.nasdaq.com/articles/cost-ai-compute-googles-tpu-advantage-vs-openais-nvidia-tax)
+<br>
+[^28]: [TechPowerUp. NVIDIA's Dominance Challenged as Largest AI Lab Adopts Google TPUs.](https://www.techpowerup.com/338477/nvidias-dominance-challenged-as-largest-ai-lab-adopts-google-tpus)
+<br>
+[^29]: [Nasdaq. (2024). The Cost of AI Compute: Google's TPU Advantage vs. OpenAI's Nvidia Tax.](https://www.nasdaq.com/articles/cost-ai-compute-googles-tpu-advantage-vs-openais-nvidia-tax)
+<br>
+[^30]: [Google Cloud Blog. (2024). Trillium TPU is GA.](https://cloud.google.com/blog/products/compute/trillium-tpu-is-ga)
+<br>
+[^31]: [Backblaze. (2024). AI 101: GPU vs. TPU vs. NPU.](https://www.backblaze.com/blog/ai-101-gpu-vs-tpu-vs-npu/)
+<br>
+[^32]: [TechPowerUp. NVIDIA's Dominance Challenged as Largest AI Lab Adopts Google TPUs.](https://www.techpowerup.com/338477/nvidias-dominance-challenged-as-largest-ai-lab-adopts-google-tpus)
+<br>
+[^33]: [TechPowerUp. NVIDIA's Dominance Challenged as Largest AI Lab Adopts Google TPUs.](https://www.techpowerup.com/338477/nvidias-dominance-challenged-as-largest-ai-lab-adopts-google-tpus)
+<br>
